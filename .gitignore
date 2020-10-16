@@ -1,8 +1,7 @@
 .vscode
-tibrv/tibrv.test
-tmp
-./sendrequest
-./sendreply
-./rvlisten
-./rvsend
-./simple
+*/tibrv.test
+sendrequest
+sendreply
+rvlisten
+rvsend
+simple
