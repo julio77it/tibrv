@@ -16,7 +16,6 @@ import "C"
 import (
 	"github.com/mattn/go-pointer"
 
-	"fmt"
 	"unsafe"
 )
 
@@ -74,8 +73,6 @@ type RvVectListener struct {
 
 //export vectcallbackProxy
 func vectcallbackProxy(cMessage *C.tibrvMsg, numMessages C.tibrv_u32) {
-	fmt.Println("vectcallbackProxy : # ", numMessages)
-
 	var i uintptr
 	var len uintptr = uintptr(numMessages)
 
