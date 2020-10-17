@@ -966,3 +966,121 @@ func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64)
 	}
 	return nil
 }
+
+// GetFloat32Array read a 32bit float array field
+func (m RvMessage) GetFloat32Array(name string) ([]float32, error) {
+	return m.getFloat32Array(name, 0)
+}
+func (m RvMessage) getFloat32Array(name string, fieldID FieldID) ([]float32, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.float
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetF32ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]float32, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = float32(*(*C.float)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetFloat32Array add a 32bit float field
+func (m *RvMessage) SetFloat32Array(name string, value []float32) error {
+	return m.setFloat32Array(name, 0, value)
+}
+func (m *RvMessage) setFloat32Array(name string, fieldID FieldID, value []float32) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.float)(unsafe.Pointer(itemPointer)) = C.float(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateF32ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.float)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetFloat64Array read a 64bit float array field
+func (m RvMessage) GetFloat64Array(name string) ([]float64, error) {
+	return m.getFloat64Array(name, 0)
+}
+func (m RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.double
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetF64ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]float64, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = float64(*(*C.double)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetFloat64Array add a 64bit float field
+func (m *RvMessage) SetFloat64Array(name string, value []float64) error {
+	return m.setFloat64Array(name, 0, value)
+}
+func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float64) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.double)(unsafe.Pointer(itemPointer)) = C.double(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateF64ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.double)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}

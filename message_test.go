@@ -653,3 +653,57 @@ func TestRvMessageUInt64Array(t *testing.T) {
 		t.Fatalf("Expected ERR, got nil")
 	}
 }
+
+func TestRvMessageFloat32Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []float32{5.0, 3.145, 1234567.90}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetFloat32Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetFloat32Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetFloat32Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageFloat64Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []float64{5.0, 3.145, 1234567.90}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetFloat64Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetFloat64Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetFloat64Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
