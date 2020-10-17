@@ -3,6 +3,7 @@ package tibrv
 /*
 #include <tibrv/tibrv.h>
 #include <stdlib.h>
+#include <malloc.h>
 */
 import "C"
 import "unsafe"
@@ -485,61 +486,483 @@ func (m *RvMessage) setRvMessage(name string, fieldID FieldID, value RvMessage) 
 	return nil
 }
 
+// arrayItemPositionPointer pointer arithmetics using bytes, index and typesize
+func arrayItemPositionPointer(base uintptr, index uintptr, itemSize uintptr) unsafe.Pointer {
+	return unsafe.Pointer(base + index*itemSize)
+}
+
 // GetInt8Array read a 8bit integer array field
 func (m RvMessage) GetInt8Array(name string) ([]int8, error) {
 	return m.getInt8Array(name, 0)
 }
 func (m RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
-	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
-	var cv *C.schar
-	var clen C.uint
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
 
-	status := C.tibrvMsg_GetI8ArrayEx(m.internal, cn, &cv, &clen, C.ushort(fieldID))
+	var arrayValues *C.schar
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetI8ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return nil, NewRvError(status)
 	}
 	// convert to slice
-	result := make([]int8, uint(clen))
-	var i uintptr
-	var len uintptr = uintptr(clen)
+	result := make([]int8, uint(arrayLen))
 
-	for i = 0; i < len; i++ {
-		// pointer arithmetics is discouraged, but need with C bindings
-		//                                                                        |  offset in the array |
-		//                                                   | array index ZERO   |
-		//            nested cast for get work done          |
-		result[i] = (int8)(*(*C.schar)(unsafe.Pointer(uintptr(unsafe.Pointer(cv)) + i*unsafe.Sizeof(*cv))))
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = int8(*(*C.schar)(itemPointer))
 	}
 	return result, nil
 }
 
-/*
 // SetInt8Array add a 8bit integer field
 func (m *RvMessage) SetInt8Array(name string, value []int8) error {
-	return m.setInt8(name, 0, value)
+	return m.setInt8Array(name, 0, value)
 }
 func (m *RvMessage) setInt8Array(name string, fieldID FieldID, value []int8) error {
-	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
 
-	cv := make([]byte, len(value))
-	//defer C.free(unsafe.Pointer(cv))
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
 
-	status := C.tibrvMsg_UpdateI8ArrayEx(m.internal, cn, *C.schar(&cv), C.ushort(fieldID))
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		//int8(*(*C.schar)(itemPointer))
+		*(*C.schar)(unsafe.Pointer(itemPointer)) = C.schar(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateI8ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.schar)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
 	return nil
 }
-*/
 
-/*
-tibrv_status
-tibrvMsg_Addelement_typeArrayEx(
-   tibrvMsg             message,
-   const char*          fieldName,
-   const element_type*     value,
-   tibrv_u32            numElements,
-   tibrv_u16            fieldId);
-*/
+// GetInt16Array read a 16bit integer array field
+func (m RvMessage) GetInt16Array(name string) ([]int16, error) {
+	return m.getInt16Array(name, 0)
+}
+func (m RvMessage) getInt16Array(name string, fieldID FieldID) ([]int16, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.short
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetI16ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]int16, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = int16(*(*C.short)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetInt16Array add a 16bit integer field
+func (m *RvMessage) SetInt16Array(name string, value []int16) error {
+	return m.setInt16Array(name, 0, value)
+}
+func (m *RvMessage) setInt16Array(name string, fieldID FieldID, value []int16) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		//int8(*(*C.schar)(itemPointer))
+		*(*C.short)(unsafe.Pointer(itemPointer)) = C.short(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateI16ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.short)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetInt32Array read a 32bit integer array field
+func (m RvMessage) GetInt32Array(name string) ([]int32, error) {
+	return m.getInt32Array(name, 0)
+}
+func (m RvMessage) getInt32Array(name string, fieldID FieldID) ([]int32, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.int
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetI32ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]int32, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = int32(*(*C.int)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetInt32Array add a 32bit integer field
+func (m *RvMessage) SetInt32Array(name string, value []int32) error {
+	return m.setInt32Array(name, 0, value)
+}
+func (m *RvMessage) setInt32Array(name string, fieldID FieldID, value []int32) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		//int8(*(*C.schar)(itemPointer))
+		*(*C.int)(unsafe.Pointer(itemPointer)) = C.int(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateI32ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.int)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetInt64Array read a 64bit integer array field
+func (m RvMessage) GetInt64Array(name string) ([]int64, error) {
+	return m.getInt64Array(name, 0)
+}
+func (m RvMessage) getInt64Array(name string, fieldID FieldID) ([]int64, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.longlong
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetI64ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]int64, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = int64(*(*C.longlong)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetInt64Array add a 64bit integer field
+func (m *RvMessage) SetInt64Array(name string, value []int64) error {
+	return m.setInt64Array(name, 0, value)
+}
+func (m *RvMessage) setInt64Array(name string, fieldID FieldID, value []int64) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		//int8(*(*C.schar)(itemPointer))
+		*(*C.longlong)(unsafe.Pointer(itemPointer)) = C.longlong(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateI64ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.longlong)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetUInt8Array read a 8bit integer array field
+func (m RvMessage) GetUInt8Array(name string) ([]uint8, error) {
+	return m.getUInt8Array(name, 0)
+}
+func (m RvMessage) getUInt8Array(name string, fieldID FieldID) ([]uint8, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.uchar
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetU8ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]uint8, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = uint8(*(*C.schar)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetUInt8Array add a 8bit integer field
+func (m *RvMessage) SetUInt8Array(name string, value []uint8) error {
+	return m.setUInt8Array(name, 0, value)
+}
+func (m *RvMessage) setUInt8Array(name string, fieldID FieldID, value []uint8) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.uchar)(unsafe.Pointer(itemPointer)) = C.uchar(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateU8ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.uchar)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetUInt16Array read a 16bit integer array field
+func (m RvMessage) GetUInt16Array(name string) ([]uint16, error) {
+	return m.getUInt16Array(name, 0)
+}
+func (m RvMessage) getUInt16Array(name string, fieldID FieldID) ([]uint16, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.ushort
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetU16ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]uint16, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = uint16(*(*C.ushort)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetUInt16Array add a 16bit integer field
+func (m *RvMessage) SetUInt16Array(name string, value []uint16) error {
+	return m.setUInt16Array(name, 0, value)
+}
+func (m *RvMessage) setUInt16Array(name string, fieldID FieldID, value []uint16) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.ushort)(unsafe.Pointer(itemPointer)) = C.ushort(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateU16ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.ushort)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetUInt32Array read a 32bit integer array field
+func (m RvMessage) GetUInt32Array(name string) ([]uint32, error) {
+	return m.getUInt32Array(name, 0)
+}
+func (m RvMessage) getUInt32Array(name string, fieldID FieldID) ([]uint32, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.uint
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetU32ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]uint32, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = uint32(*(*C.uint)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetUInt32Array add a 32bit integer field
+func (m *RvMessage) SetUInt32Array(name string, value []uint32) error {
+	return m.setUInt32Array(name, 0, value)
+}
+func (m *RvMessage) setUInt32Array(name string, fieldID FieldID, value []uint32) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.uint)(unsafe.Pointer(itemPointer)) = C.uint(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateU32ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.uint)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetUInt64Array read a 64bit integer array field
+func (m RvMessage) GetUInt64Array(name string) ([]uint64, error) {
+	return m.getUInt64Array(name, 0)
+}
+func (m RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues *C.ulonglong
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetU64ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]uint64, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = uint64(*(*C.ulonglong)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetUInt64Array add a 64bit integer field
+func (m *RvMessage) SetUInt64Array(name string, value []uint64) error {
+	return m.setUInt64Array(name, 0, value)
+}
+func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		// cast & conversion from slice position to bytes
+		*(*C.ulonglong)(unsafe.Pointer(itemPointer)) = C.ulonglong(value[j])
+		j++
+	}
+	status := C.tibrvMsg_UpdateU64ArrayEx(
+		m.internal,
+		arrayName,
+		(*C.ulonglong)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}

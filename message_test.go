@@ -1,6 +1,9 @@
 package tibrv
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestRvMessage(t *testing.T) {
 	var msg RvMessage
@@ -415,5 +418,238 @@ func TestRvMessageMsg(t *testing.T) {
 
 	if outV != inV {
 		t.Fatalf("Expected %f, got %f", inV, outV)
+	}
+}
+
+func TestArrayItemPositionPointer(t *testing.T) {
+	if expected, got := uintptr(8), uintptr(arrayItemPositionPointer(0, 8, 1)); expected != got {
+		t.Fatalf("Expected %d, got %d", expected, got)
+	}
+	if expected, got := uintptr(16), uintptr(arrayItemPositionPointer(0, 8, 2)); expected != got {
+		t.Fatalf("Expected %d, got %d", expected, got)
+	}
+	if expected, got := uintptr(32), uintptr(arrayItemPositionPointer(0, 8, 4)); expected != got {
+		t.Fatalf("Expected %d, got %d", expected, got)
+	}
+	if expected, got := uintptr(64), uintptr(arrayItemPositionPointer(0, 8, 8)); expected != got {
+		t.Fatalf("Expected %d, got %d", expected, got)
+	}
+}
+
+func TestRvMessageInt8Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []int8{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetInt8Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetInt8Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetInt8Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageInt16Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []int16{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetInt16Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetInt16Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetInt16Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageInt32Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := make([]int32, 0, 3)
+	in = append(in, 126, 125, 124)
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetInt32Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetInt32Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetInt32Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageInt64Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []int64{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetInt64Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetInt64Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetInt64Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageUInt8Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []uint8{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetUInt8Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetUInt8Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetUInt8Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageUInt16Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []uint16{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetUInt16Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetUInt16Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetUInt16Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageUInt32Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := make([]uint32, 0, 3)
+	in = append(in, 126, 125, 124)
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetUInt32Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetUInt32Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetUInt32Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageUInt64Array(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []uint64{126, 125, 124}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetUInt64Array(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetUInt64Array(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetUInt64Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
 	}
 }
