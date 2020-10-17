@@ -1,14 +1,17 @@
 package tibrv
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestRvNetTransportSend(t *testing.T) {
 	var transport RvNetTransport
 
 	err := transport.Create(
-		Service("7500"),
-		Network(""),
-		Daemon("7500"),
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
 		Description("TestDescription"),
 	)
 	if err != nil {
@@ -50,10 +53,10 @@ func BenchmarkRvNetTransportSend(b *testing.B) {
 	var transport RvNetTransport
 
 	err := transport.Create(
-		Service("7500"),
-		Network(""),
-		Daemon("7500"),
-		Description("BenchmarkSQLRowsGetFields"),
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+		Description("BenchmarkDescription"),
 	)
 	if err != nil {
 		b.Fatalf("Expected nil, got %v", err)

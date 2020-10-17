@@ -1,6 +1,7 @@
 package tibrv
 
 import (
+	"os"
 	"sync"
 	"testing"
 )
@@ -17,13 +18,18 @@ func TestCmRvListenerPublishSubscribe(t *testing.T) {
 	defer queue.Destroy()
 
 	var ntransport RvNetTransport
-	if err := ntransport.Create(); err != nil {
+	err := ntransport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+	)
+	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 	defer ntransport.Destroy()
 
 	var transport RvCmTransport
-	err := transport.Create(&ntransport, Session(session), Ledger(ledger))
+	err = transport.Create(&ntransport, Session(session), Ledger(ledger))
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
@@ -87,13 +93,18 @@ func TestCmRvListenerRequestReply(t *testing.T) {
 	defer queue.Destroy()
 
 	var ntransport RvNetTransport
-	if err := ntransport.Create(); err != nil {
+	err := ntransport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+	)
+	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 	defer ntransport.Destroy()
 
 	var transport RvCmTransport
-	err := transport.Create(&ntransport, Session(session), Ledger(ledger))
+	err = transport.Create(&ntransport, Session(session), Ledger(ledger))
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}

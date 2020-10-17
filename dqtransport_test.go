@@ -1,14 +1,16 @@
 package tibrv
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestRvDqTransportSend(t *testing.T) {
 	var transport RvNetTransport
 	err := transport.Create(
-		Service("7500"),
-		Network(""),
-		Daemon("7500"),
-		Description("TestDescription"),
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
 	)
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)

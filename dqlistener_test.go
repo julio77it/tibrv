@@ -1,6 +1,7 @@
 package tibrv
 
 import (
+	"os"
 	"testing"
 )
 
@@ -14,13 +15,18 @@ func TestDqListenerPublishSubscribe(t *testing.T) {
 	defer queue.Destroy()
 
 	var ntransport RvNetTransport
-	if err := ntransport.Create(); err != nil {
+	err := ntransport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+	)
+	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 	defer ntransport.Destroy()
 
 	var transport RvDqTransport
-	err := transport.Create(
+	err = transport.Create(
 		&ntransport,
 		Name("TestDqListenerPublishSubscribe"),
 		WorkerWeight(DefaultWorkerWeight),

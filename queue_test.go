@@ -1,6 +1,9 @@
 package tibrv
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestRvQueue(t *testing.T) {
 	var queue RvQueue
@@ -75,13 +78,17 @@ func TestRvQueueGroup(t *testing.T) {
 	}
 
 	var transport RvNetTransport
-	status = transport.Create()
-	if status != nil {
+	err := transport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+	)
+	if err != nil {
 		t.Fatalf("Expected nil, got %v", TibrvTimeout)
 	}
 	subject := "TEST.QGROUP"
 	var listener RvListener
-	err := listener.Create(
+	err = listener.Create(
 		queue,
 		func(m *RvMessage) {},
 		transport,
