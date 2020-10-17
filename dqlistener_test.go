@@ -70,9 +70,11 @@ func TestDqListenerPublishSubscribe(t *testing.T) {
 	}
 	defer msg.Destroy()
 
-	err = ntransport.Send(msg)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
+	for i := 0; i < 100; i++ {
+		err = ntransport.Send(msg)
+		if err != nil {
+			t.Fatalf("Expected nil, got %v", err)
+		}
 	}
 	if err := queue.Dispatch(); err != nil {
 		t.Fatalf("Expected nil, got %v", err)
