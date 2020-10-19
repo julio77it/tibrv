@@ -6,8 +6,8 @@ import (
 )
 
 func TestRvDqTransportSend(t *testing.T) {
-	var transport RvNetTransport
-	err := transport.Create(
+	var ntransport RvNetTransport
+	err := ntransport.Create(
 		Service(os.Getenv("TEST_SERVICE")),
 		Network(os.Getenv("TEST_NETWORK")),
 		Daemon(os.Getenv("TEST_DAEMON")),
@@ -15,9 +15,11 @@ func TestRvDqTransportSend(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
-	var dqueue RvDqTransport
-	err = dqueue.Create(
-		&transport,
+	defer ntransport.Destroy()
+
+	var transport RvDqTransport
+	err = transport.Create(
+		&ntransport,
 		Name("TestRvDqTransportSend"),
 		WorkerWeight(1),
 		WorkerTasks(1),
@@ -26,39 +28,6 @@ func TestRvDqTransportSend(t *testing.T) {
 		SchedulerActivation(3.5),
 	)
 	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-
-	var msg RvMessage
-	if err := msg.Create(); err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	err = msg.SetSendSubject("PROVA.TEST.TIBRV")
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	err = msg.SetString("StringField", "StringValue")
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	err = msg.SetInt8("Int8Field", -1)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	err = msg.SetUInt32("UInt32Field", 70000)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	err = msg.SetFloat64("Float64Field", -3.145)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	defer msg.Destroy()
-
-	if err := transport.Send(msg); err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
-	if err := dqueue.Destroy(); err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 	if err := transport.Destroy(); err != nil {

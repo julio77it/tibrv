@@ -54,7 +54,7 @@ func (l *RvDqListener) Create(queue RvQueue, callback RvCallback, transport RvDq
 
 // Destroy put the listener in an invalid state, cleaning memory
 func (l *RvDqListener) Destroy() error {
-	status := C.tibrvcmEvent_DestroyEx(l.internal, C.TIBRVCM_PERSIST, nil)
+	status := C.tibrvcmEvent_DestroyEx(l.internal, C.TIBRVCM_CANCEL, nil)
 
 	if status != C.TIBRV_OK {
 		return NewRvError(status)

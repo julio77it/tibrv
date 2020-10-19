@@ -3,6 +3,7 @@ package tibrv
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func TestDqListenerPublishSubscribe(t *testing.T) {
@@ -39,6 +40,7 @@ func TestDqListenerPublishSubscribe(t *testing.T) {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 	defer transport.Destroy()
+	time.Sleep(time.Second * 2)
 
 	var output string
 	var callback RvCallback = func(s *string) func(msg *RvMessage) {
@@ -57,6 +59,7 @@ func TestDqListenerPublishSubscribe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
+	time.Sleep(time.Second * 2)
 
 	var msg RvMessage
 	if err := msg.Create(); err != nil {
@@ -70,17 +73,15 @@ func TestDqListenerPublishSubscribe(t *testing.T) {
 	}
 	defer msg.Destroy()
 
-	for i := 0; i < 100; i++ {
-		err = ntransport.Send(msg)
-		if err != nil {
-			t.Fatalf("Expected nil, got %v", err)
-		}
+	input := msg.String()
+
+	err = ntransport.Send(msg)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
 	}
 	if err := queue.Dispatch(); err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
-	input := msg.String()
-
 	if output != input {
 		t.Fatalf("Expected %s, got %s", input, output)
 	}

@@ -6,6 +6,7 @@ package tibrv
 #include <tibrv/cm.h>
 */
 import "C"
+import "unsafe"
 
 // RvDqTransport the distributed queue transport transport
 type RvDqTransport struct {
@@ -24,7 +25,7 @@ func (t *RvDqTransport) Create(transport *RvNetTransport, opts ...DqTransportOpt
 	for _, opt := range opts {
 		conf = opt(conf)
 	}
-	var name *C.char
+	var name *C.char = nil
 	var workerWeight, workerTasks C.uint
 	var schedulerWeight C.ushort
 	var schedulerHeartbeat, schedulerActivation C.double
@@ -56,6 +57,9 @@ func (t *RvDqTransport) Create(transport *RvNetTransport, opts ...DqTransportOpt
 		schedulerHeartbeat,
 		schedulerActivation,
 	)
+	if name != nil {
+		C.free(unsafe.Pointer(name))
+	}
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
