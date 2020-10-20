@@ -87,10 +87,12 @@ func TestVectRvListenerPublishSubscribe(t *testing.T) {
 	}
 	defer queue.Destroy()
 
-	var transport RvNetTransport
-	if err := transport.Create(); err != nil {
-		t.Fatalf("Expected nil, got %v", err)
-	}
+        var transport RvNetTransport
+        err := transport.Create(
+                Service(os.Getenv("TEST_SERVICE")),
+                Network(os.Getenv("TEST_NETWORK")),
+                Daemon(os.Getenv("TEST_DAEMON")),
+        )
 	defer transport.Destroy()
 
 	var output string
@@ -102,7 +104,7 @@ func TestVectRvListenerPublishSubscribe(t *testing.T) {
 	}(&output)
 
 	var listener RvVectListener
-	err := listener.Create(
+	err = listener.Create(
 		queue,
 		callback,
 		transport,
