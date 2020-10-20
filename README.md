@@ -1,4 +1,4 @@
-# gotibrv
+# tibrv
 A CGO wrapper for [TIBCO](https://www.tibco.com/) [RendezVous C API](https://docs.tibco.com/pub/rendezvous/8.5.0/doc/html/wwhelp/wwhimpl/js/html/wwhelp.htm)
 
 ## Introduction
