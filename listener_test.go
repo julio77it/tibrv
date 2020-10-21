@@ -87,12 +87,15 @@ func TestVectRvListenerPublishSubscribe(t *testing.T) {
 	}
 	defer queue.Destroy()
 
-        var transport RvNetTransport
-        err := transport.Create(
-                Service(os.Getenv("TEST_SERVICE")),
-                Network(os.Getenv("TEST_NETWORK")),
-                Daemon(os.Getenv("TEST_DAEMON")),
-        )
+	var transport RvNetTransport
+	err := transport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+	)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
 	defer transport.Destroy()
 
 	var output string
