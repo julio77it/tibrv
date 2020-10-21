@@ -115,13 +115,13 @@ func TestNetRvListenerRequestReply(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	go func() {
-		if err = queue.Dispatch(); err != nil {
+		if err := queue.Dispatch(); err != nil {
 			t.Fatalf("Expected nil, got %v", err)
 		}
 		wg.Done()
 	}()
 	go func() {
-		if err = transport.SendRequest(request, &reply, WaitForEver); err != nil {
+		if err := transport.SendRequest(request, &reply, WaitForEver); err != nil {
 			t.Fatalf("Expected nil, got %v", err)
 		}
 		wg.Done()
