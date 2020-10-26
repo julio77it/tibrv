@@ -1,7 +1,6 @@
 package tibrv
 
 import (
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -75,13 +74,12 @@ func TestFtMember(t *testing.T) {
 		groupName,
 		2, 2, 1, 0, 3,
 	)
-	time.Sleep(time.Second * 4)
+	time.Sleep(time.Second * 2)
 
 	for i := 0; i < 5; i++ {
 		queue.Dispatch()
 	}
 	input := msg.String()
-	fmt.Println(input, output)
 
 	if output != input {
 		t.Fatalf("Expected %s, got %s", input, output)
