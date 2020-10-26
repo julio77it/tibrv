@@ -47,5 +47,17 @@ type RvDispatchable interface {
 	TimedDispatch() error
 }
 
-// RvCallback signature for the handler function
+// RvCallback signature for the message handler function
 type RvCallback = func(*RvMessage)
+
+// FtPrepareToActivate fault tollerance status : near to activate
+const FtPrepareToActivate = 1
+
+// FtActivate fault tollerance status : activating
+const FtActivate = 2
+
+// FtDeactivate fault tollerance status : deactivating
+const FtDeactivate = 3
+
+// FtCallback signature for the fault tollerance event handler function
+type FtCallback = func(string, uint)
