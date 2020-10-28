@@ -1215,14 +1215,12 @@ func (m RvMessage) JSON() (string, error) {
 		}
 		if FieldTypeMsg == fieldType {
 			fieldValue, err := m.GetRvMessage(fieldName)
-			fmt.Println(fieldValue, err)
 			// if err != nil {
 			// 	return "", err
 			// }
 			defer fieldValue.Destroy()
 
 			fieldValueText, err := fieldValue.JSON()
-			fmt.Println(fieldValueText, err)
 			if err != nil {
 				return "", err
 			}
@@ -1233,16 +1231,6 @@ func (m RvMessage) JSON() (string, error) {
 				return "", err
 			}
 			fmt.Fprintf(result, "\"%s\": \"%s\"", fieldName, fieldValue)
-			// } else if FieldTypeBool == fieldType {
-			// 	fieldValue, err := m.GetBool(fieldName)
-			// 	if err != nil {
-			// 		return "", err
-			// 	}
-			// 	fieldLabel := "false"
-			// 	if fieldValue {
-			// 		fieldLabel := "true"
-			// 	}
-			// 	result = fmt.Sprintf("%s \"%s\": %s", result, fieldName, fieldLabel)
 		} else if FieldTypeInt8 == fieldType {
 			fieldValue, err := m.GetInt8(fieldName)
 			if err != nil {

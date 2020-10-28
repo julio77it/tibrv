@@ -41,5 +41,10 @@ func main() {
 	defer innerMsg.Destroy()
 	msg.SetRvMessage("RvMessage", innerMsg)
 
-	fmt.Println(msg.JSON())
+	output, err := msg.JSON()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(output)
 }
