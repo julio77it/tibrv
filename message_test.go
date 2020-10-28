@@ -436,6 +436,33 @@ func TestArrayItemPositionPointer(t *testing.T) {
 	}
 }
 
+func TestRvMessageStringArray(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	in := []string{"ABC", "DEF", "GHI"}
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetStringArray(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetStringArray(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	out, err = msg.GetStringArray(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
 func TestRvMessageInt8Array(t *testing.T) {
 	var msg RvMessage
 
@@ -705,5 +732,266 @@ func TestRvMessageFloat64Array(t *testing.T) {
 	out, err = msg.GetFloat64Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageGetFields(t *testing.T) {
+	var msg RvMessage
+
+	err := msg.Create()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetString("String", "string")
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt8("Int8", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt8("UInt8", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt16("Int16", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt16("UInt16", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt32("Int32", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt32("UInt32", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt64("Int64", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt64("UInt64", 1)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetFloat32("Float32", 1.0)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetFloat64("Float64", 1.0)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetStringArray("StringArray", []string{"string1", "string2"})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt8Array("Int8Array", []int8{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt8Array("UInt8Array", []uint8{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt16Array("Int16Array", []int16{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt16Array("UInt16Array", []uint16{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt32Array("Int32Array", []int32{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt32Array("UInt32Array", []uint32{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetInt64Array("Int64Array", []int64{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetUInt64Array("UInt64Array", []uint64{1, 2})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetFloat32Array("Float32Array", []float32{1.2, 2.3})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = msg.SetFloat64Array("Float64Array", []float64{1.2, 2.3})
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	var innerMsg RvMessage
+	innerMsg.Create()
+	defer innerMsg.Destroy()
+	err = msg.SetRvMessage("RvMessage", innerMsg)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	fields, err := msg.GetFields()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if fieldType, ok := fields["String"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeString {
+		t.Fatalf("Expected %v, got %v", FieldTypeString, fieldType)
+	}
+	if fieldType, ok := fields["Int8"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt8 {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt8, fieldType)
+	}
+	if fieldType, ok := fields["UInt8"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt8 {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt8, fieldType)
+	}
+	if fieldType, ok := fields["Int16"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt16 {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt16, fieldType)
+	}
+	if fieldType, ok := fields["UInt16"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt16 {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt16, fieldType)
+	}
+	if fieldType, ok := fields["Int32"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt32 {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt32, fieldType)
+	}
+	if fieldType, ok := fields["UInt32"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt32 {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt32, fieldType)
+	}
+	if fieldType, ok := fields["Int64"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt64 {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt64, fieldType)
+	}
+	if fieldType, ok := fields["UInt64"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt64 {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt64, fieldType)
+	}
+	if fieldType, ok := fields["Float32"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeFloat32 {
+		t.Fatalf("Expected %v, got %v", FieldTypeFloat32, fieldType)
+	}
+	if fieldType, ok := fields["Float64"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeFloat64 {
+		t.Fatalf("Expected %v, got %v", FieldTypeFloat64, fieldType)
+	}
+	if fieldType, ok := fields["StringArray"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeStringArray {
+		t.Fatalf("Expected %v, got %v", FieldTypeStringArray, fieldType)
+	}
+	if fieldType, ok := fields["Int8Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt8Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt8Array, fieldType)
+	}
+	if fieldType, ok := fields["UInt8Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt8Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt8Array, fieldType)
+	}
+	if fieldType, ok := fields["Int16Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt16Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt16Array, fieldType)
+	}
+	if fieldType, ok := fields["UInt16Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt16Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt16Array, fieldType)
+	}
+	if fieldType, ok := fields["Int32Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt32Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt32Array, fieldType)
+	}
+	if fieldType, ok := fields["UInt32Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt32Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt32Array, fieldType)
+	}
+	if fieldType, ok := fields["Int64Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeInt64Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeInt64Array, fieldType)
+	}
+	if fieldType, ok := fields["UInt64Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeUInt64Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeUInt64Array, fieldType)
+	}
+	if fieldType, ok := fields["Float32Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeFloat32Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeFloat32Array, fieldType)
+	}
+	if fieldType, ok := fields["Float64Array"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeFloat64Array {
+		t.Fatalf("Expected %v, got %v", FieldTypeFloat64Array, fieldType)
+	}
+	if fieldType, ok := fields["RvMessage"]; !ok {
+		t.Fatal("Expected ok, got !ok")
+	} else if fieldType != FieldTypeMsg {
+		t.Fatalf("Expected %v, got %v", FieldTypeMsg, fieldType)
+	}
+}
+func TestRvMessageGetNumFields(t *testing.T) {
+	var msg RvMessage
+
+	err := msg.Create()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	n, err := msg.GetNumFields()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if n != 0 {
+		t.Fatalf("Expected 0, got %v", n)
+	}
+	err = msg.SetString("String1", "string1")
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	n, err = msg.GetNumFields()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if n != 1 {
+		t.Fatalf("Expected 1, got %v", n)
+	}
+	err = msg.SetString("String2", "string2")
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	n, err = msg.GetNumFields()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if n != 2 {
+		t.Fatalf("Expected 2, got %v", n)
 	}
 }

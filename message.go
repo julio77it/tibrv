@@ -108,6 +108,45 @@ func (m *RvMessage) GetReplySubject() (string, error) {
 	return C.GoString(cstr), nil
 }
 
+// GetFields returns a map with field names as keys and field types values
+func (m RvMessage) GetFields() (map[string]uint8, error) {
+	fields := make(map[string]uint8)
+
+	n, err := m.GetNumFields()
+
+	if err != nil {
+		return nil, err
+	}
+	for i := uint(0); i < n; i++ {
+		var field C.tibrvMsgField
+
+		status := C.tibrvMsg_GetFieldByIndex(
+			m.internal,
+			&field,
+			C.uint(i),
+		)
+		if status != C.TIBRV_OK {
+			return nil, NewRvError(status)
+		}
+		fields[C.GoString(field.name)] = uint8(field._type)
+	}
+	return fields, nil
+}
+
+// GetNumFields returns the number of fields of the message
+func (m RvMessage) GetNumFields() (uint, error) {
+	var n C.uint
+
+	status := C.tibrvMsg_GetNumFields(
+		m.internal,
+		&n,
+	)
+	if status != C.TIBRV_OK {
+		return 0, NewRvError(status)
+	}
+	return uint(n), nil
+}
+
 // GetInt8 read a 8bit integer field
 func (m RvMessage) GetInt8(name string) (int8, error) {
 	return m.getInt8(name, 0)
@@ -451,6 +490,75 @@ func (m *RvMessage) setString(name string, fieldID FieldID, value string) error 
 	return nil
 }
 
+// GetStringArray read a string array field
+func (m RvMessage) GetStringArray(name string) ([]string, error) {
+	return m.getStringArray(name, 0)
+}
+func (m RvMessage) getStringArray(name string, fieldID FieldID) ([]string, error) {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var arrayValues **C.char
+	var arrayLen C.uint
+
+	status := C.tibrvMsg_GetStringArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	// convert to slice
+	result := make([]string, uint(arrayLen))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		// cast & conversion from bytes to slice position
+		result[i] = C.GoString(*(**C.char)(itemPointer))
+	}
+	return result, nil
+}
+
+// SetStringArray add a string array field
+func (m *RvMessage) SetStringArray(name string, value []string) error {
+	return m.setStringArray(name, 0, value)
+}
+func (m *RvMessage) setStringArray(name string, fieldID FieldID, value []string) error {
+	arrayName := C.CString(name)
+	defer C.free(unsafe.Pointer(arrayName))
+
+	var sizer *C.char
+	arrayLen := len(value)
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(sizer))))
+	defer C.free(unsafe.Pointer(arrayValues))
+
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer))
+
+		cstr := C.CString(value[i]) // free at the end of the function
+		// cast & conversion from slice position to bytes
+		//int8(*(*C.schar)(itemPointer))
+		*(**C.char)(unsafe.Pointer(itemPointer)) = cstr
+	}
+	status := C.tibrvMsg_UpdateStringArrayEx(
+		m.internal,
+		arrayName,
+		(**C.char)(arrayValues),
+		C.uint(arrayLen),
+		C.ushort(fieldID),
+	)
+	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+		// pointer arithmetics inside this function
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer))
+
+		// free
+		C.free(unsafe.Pointer(*(**C.char)(itemPointer)))
+	}
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
 // GetRvMessage read a nested message
 func (m RvMessage) GetRvMessage(name string) (RvMessage, error) {
 	return m.getRvMessage(name, 0)
@@ -518,7 +626,7 @@ func (m RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
 	return result, nil
 }
 
-// SetInt8Array add a 8bit integer field
+// SetInt8Array add a 8bit integer array field
 func (m *RvMessage) SetInt8Array(name string, value []int8) error {
 	return m.setInt8Array(name, 0, value)
 }
