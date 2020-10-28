@@ -6,7 +6,11 @@ package tibrv
 #include <malloc.h>
 */
 import "C"
-import "unsafe"
+import (
+	"bytes"
+	"fmt"
+	"unsafe"
+)
 
 // FieldID field identifier type
 type FieldID = uint16
@@ -1191,4 +1195,260 @@ func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float6
 		return NewRvError(status)
 	}
 	return nil
+}
+
+// JSON returns a json string representation of the message
+func (m RvMessage) JSON() (string, error) {
+
+	fieldList, err := m.GetFields()
+	if err != nil {
+		return "", err
+	}
+	var buffer string
+	result := bytes.NewBufferString(buffer)
+	fmt.Fprint(result, "{")
+
+	i := 0
+	for fieldName, fieldType := range fieldList {
+		if i > 0 {
+			fmt.Fprint(result, ", ")
+		}
+		if FieldTypeMsg == fieldType {
+			fieldValue, err := m.GetRvMessage(fieldName)
+			fmt.Println(fieldValue, err)
+			// if err != nil {
+			// 	return "", err
+			// }
+			defer fieldValue.Destroy()
+
+			fieldValueText, err := fieldValue.JSON()
+			fmt.Println(fieldValueText, err)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %s", fieldName, fieldValueText)
+		} else if FieldTypeString == fieldType {
+			fieldValue, err := m.GetString(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": \"%s\"", fieldName, fieldValue)
+			// } else if FieldTypeBool == fieldType {
+			// 	fieldValue, err := m.GetBool(fieldName)
+			// 	if err != nil {
+			// 		return "", err
+			// 	}
+			// 	fieldLabel := "false"
+			// 	if fieldValue {
+			// 		fieldLabel := "true"
+			// 	}
+			// 	result = fmt.Sprintf("%s \"%s\": %s", result, fieldName, fieldLabel)
+		} else if FieldTypeInt8 == fieldType {
+			fieldValue, err := m.GetInt8(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeUInt8 == fieldType {
+			fieldValue, err := m.GetUInt8(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeInt16 == fieldType {
+			fieldValue, err := m.GetInt16(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeUInt16 == fieldType {
+			fieldValue, err := m.GetUInt16(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeInt32 == fieldType {
+			fieldValue, err := m.GetInt32(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeUInt32 == fieldType {
+			fieldValue, err := m.GetUInt32(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeInt64 == fieldType {
+			fieldValue, err := m.GetInt64(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeUInt64 == fieldType {
+			fieldValue, err := m.GetUInt64(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+		} else if FieldTypeFloat32 == fieldType {
+			fieldValue, err := m.GetFloat32(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+		} else if FieldTypeFloat64 == fieldType {
+			fieldValue, err := m.GetFloat64(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+		} else if FieldTypeStringArray == fieldType {
+			fieldValue, err := m.GetStringArray(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "\"%s\"", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeInt8Array == fieldType {
+			fieldValue, err := m.GetInt8Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeUInt8Array == fieldType {
+			fieldValue, err := m.GetUInt8Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeInt16Array == fieldType {
+			fieldValue, err := m.GetInt16Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeUInt16Array == fieldType {
+			fieldValue, err := m.GetUInt16Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeInt32Array == fieldType {
+			fieldValue, err := m.GetInt32Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeUInt32Array == fieldType {
+			fieldValue, err := m.GetUInt32Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeInt64Array == fieldType {
+			fieldValue, err := m.GetInt64Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeUInt64Array == fieldType {
+			fieldValue, err := m.GetUInt64Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%d", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeFloat32Array == fieldType {
+			fieldValue, err := m.GetFloat32Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%f", v)
+			}
+			fmt.Fprint(result, "]")
+		} else if FieldTypeFloat64Array == fieldType {
+			fieldValue, err := m.GetFloat64Array(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			for j, v := range fieldValue {
+				if j > 0 {
+					fmt.Fprintf(result, ", ")
+				}
+				fmt.Fprintf(result, "%f", v)
+			}
+			fmt.Fprint(result, "]")
+		}
+		i++
+	}
+	fmt.Fprint(result, "}")
+	return result.String(), nil
 }

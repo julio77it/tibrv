@@ -1,6 +1,7 @@
 package tibrv
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -994,4 +995,16 @@ func TestRvMessageGetNumFields(t *testing.T) {
 	if n != 2 {
 		t.Fatalf("Expected 2, got %v", n)
 	}
+}
+func TestRvMessageJSON(t *testing.T) {
+	var msg RvMessage
+
+	err := msg.Create()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	msg.SetString("String1", "text1")
+	msg.SetString("String2", "text2")
+	msg.SetStringArray("StringArray", []string{"text1.1", "text1.2"})
+	fmt.Println(msg.JSON())
 }
