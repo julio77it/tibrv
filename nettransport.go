@@ -6,6 +6,11 @@ package tibrv
 */
 import "C"
 
+import (
+	"fmt"
+	"unsafe"
+)
+
 // RvNetTransport a regular transport, connected to service-network-daemon RendezVous bus
 type RvNetTransport struct {
 	internal C.tibrvTransport
@@ -79,6 +84,19 @@ func (t RvNetTransport) SendReply(res, req RvMessage) error {
 		return NewRvError(status)
 	}
 	return nil
+}
+
+// CreateInbox create a 64byte inbox
+func (t RvNetTransport) CreateInbox() (string, error) {
+	buffer := C.CString(fmt.Sprintf("%64v", ""))
+	defer C.free(unsafe.Pointer(buffer))
+
+	status := C.tibrvTransport_CreateInbox(t.internal, buffer, C.tibrv_u32(64))
+
+	if status != C.TIBRV_OK {
+		return "", NewRvError(status)
+	}
+	return C.GoString(buffer), nil
 }
 
 // netTransportConfig Network Transport configuratio

@@ -2,6 +2,7 @@ package tibrv
 
 import (
 	"os"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -48,6 +49,30 @@ func TestRvNetTransportSend(t *testing.T) {
 	if err := transport.Send(msg); err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
+}
+
+func TestRvNetTransportCreateInbox(t *testing.T) {
+	var transport RvNetTransport
+
+	err := transport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+		Description("TestDescription"),
+	)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	defer transport.Destroy()
+
+	inbox, err := transport.CreateInbox()
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if !strings.HasPrefix(inbox, "_INBOX.") {
+		t.Fatalf("Expected starting with _INBOX. , got %v", inbox)
+	}
+
 }
 
 func TestNetRvListenerRequestReply(t *testing.T) {
