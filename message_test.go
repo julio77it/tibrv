@@ -2,8 +2,10 @@ package tibrv
 
 import (
 	"encoding/json"
+	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestRvMessage(t *testing.T) {
@@ -1083,5 +1085,84 @@ func TestRvMessageJSON(t *testing.T) {
 	}
 	if !reflect.DeepEqual(e, g) {
 		t.Fatalf("Expected %v, got %v", expected, got)
+	}
+}
+
+func replier(subject string) {
+	var queue RvQueue
+	queue.Create()
+	defer queue.Destroy()
+
+	var transport RvNetTransport
+	transport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+		Description("TestDescription"),
+	)
+	defer transport.Destroy()
+
+	var callback RvCallback = func(t *RvNetTransport) func(msg *RvMessage) {
+		return func(imsg *RvMessage) {
+			var omsg RvMessage
+			omsg.create(imsg.internal)
+			t.SendReply(omsg, *imsg)
+			omsg.Destroy()
+		}
+	}(&transport)
+
+	var listener RvListener
+	listener.Create(
+		queue,
+		callback,
+		transport,
+		subject,
+	)
+	defer listener.Destroy()
+
+	queue.Dispatch()
+	time.Sleep(time.Second)
+}
+
+func TestRvMessageDebugTheBug(t *testing.T) {
+	sendSubject := "UNIT.TEST"
+	replySubject := "TEST.UNIT"
+
+	go replier(sendSubject)
+	time.Sleep(time.Second)
+
+	var request, reply, inner RvMessage
+	inner.Create()
+	inner.SetFloat64("Pi", 3.145)
+	request.Create()
+	request.SetRvMessage("inner", inner)
+	request.SetSendSubject(sendSubject)
+	request.SetReplySubject(replySubject)
+	reply.Create()
+
+	var transport RvNetTransport
+	err := transport.Create(
+		Service(os.Getenv("TEST_SERVICE")),
+		Network(os.Getenv("TEST_NETWORK")),
+		Daemon(os.Getenv("TEST_DAEMON")),
+		Description("TestDescription"),
+	)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	err = transport.SendRequest(request, &reply, WaitForEver)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	tmp, err := reply.GetRvMessage("inner")
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", nil, err)
+	}
+	pi, err := tmp.GetFloat64("Pi")
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if pi != 3.145 {
+		t.Fatalf("Expected nil, got %v", err)
 	}
 }

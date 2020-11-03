@@ -32,15 +32,18 @@ func (m *RvMessage) Create() error {
 
 func (m *RvMessage) create(src C.tibrvMsg) error {
 	status := C.tibrvMsg_CreateCopy(src, &m.internal)
-
-	var sendSubject, replySubject *C.char
-	C.tibrvMsg_GetSendSubject(src, &sendSubject)
-	C.tibrvMsg_SetSendSubject(m.internal, sendSubject)
-	C.tibrvMsg_GetReplySubject(src, &replySubject)
-	C.tibrvMsg_SetReplySubject(m.internal, replySubject)
-
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
+	}
+
+	var sendSubject, replySubject *C.char
+	status = C.tibrvMsg_GetSendSubject(src, &sendSubject)
+	if status == C.TIBRV_OK {
+		C.tibrvMsg_SetSendSubject(m.internal, sendSubject)
+	}
+	status = C.tibrvMsg_GetReplySubject(src, &replySubject)
+	if status == C.TIBRV_OK {
+		C.tibrvMsg_SetReplySubject(m.internal, replySubject)
 	}
 	return nil
 }
@@ -573,14 +576,20 @@ func (m RvMessage) getRvMessage(name string, fieldID FieldID) (RvMessage, error)
 	var cv C.tibrvMsg
 	var result RvMessage
 
-	status := C.tibrvMsg_GetMsgEx(m.internal, cn, &cv, C.ushort(fieldID))
-	if status == C.TIBRV_OK {
-		err := result.create(cv)
-		if err != nil {
-			return result, err
-		}
+	status := C.tibrvMsg_Create(&cv)
+	if status != C.TIBRV_OK {
+		return result, NewRvError(status)
 	}
-	return result, NewRvError(status)
+
+	status = C.tibrvMsg_GetMsgEx(m.internal, cn, &cv, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return result, NewRvError(status)
+	}
+	err := result.create(cv)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
 }
 
 // SetRvMessage add a nested message
