@@ -1,6 +1,15 @@
 package tibrv
 
 /*
+	Choose between statical or dynamical linking to Tibco RendezVous libraries
+	Put at FIRST the choosen option
+*/
+
+/*
+//DYNAMIC RV LINKAGE
+#cgo LDFLAGS: -ltibrvcm64 -ltibrvcmq64 -ltibrvft64 -ltibrv64
+//STATIC RV LINKAGE
+#cgo LDFLAGS: -Wl,-Bstatic -ltibrvcm64 -ltibrvcmq64 -ltibrvft64 -ltibrv64 -Wl,-Bdynamic
 #include <tibrv/tibrv.h>
 */
 import "C"

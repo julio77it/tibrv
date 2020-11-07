@@ -76,6 +76,10 @@ func TestFtMember(t *testing.T) {
 	)
 	time.Sleep(time.Second * 2)
 
+	if err := transport.Send(msg); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
 	for i := 0; i < 5; i++ {
 		queue.Dispatch()
 	}

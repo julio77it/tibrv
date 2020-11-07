@@ -1125,11 +1125,11 @@ func replier(subject string) {
 }
 
 func TestRvMessageDebugTheBug(t *testing.T) {
-	sendSubject := "UNIT.TEST"
-	replySubject := "TEST.UNIT"
+	sendSubject := "UNIT.TEST.DBG"
+	replySubject := "DBG.TEST.UNIT"
 
 	go replier(sendSubject)
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 2)
 
 	var request, reply, inner RvMessage
 	inner.Create()
