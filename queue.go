@@ -1,19 +1,36 @@
 package tibrv
 
 /*
+#include <stdlib.h>
 #include <tibrv/tibrv.h>
 */
 import "C"
+import (
+	"unsafe"
+)
 
 // RvQueue event queue
 type RvQueue struct {
 	internal C.tibrvQueue
 }
 
-// Create initialize the event queue
-func (q *RvQueue) Create() error {
+// Create initialize the event queue. Options: label
+func (q *RvQueue) Create(opts ...QueueOption) error {
+	conf := queueConfig{}
+	for _, opt := range opts {
+		conf = opt(conf)
+	}
 	if status := C.tibrvQueue_Create(&q.internal); status != C.TIBRV_OK {
 		return NewRvError(status)
+	}
+	if len(conf.Label) > 0 {
+		var label *C.char
+		label = C.CString(conf.Label)
+		defer C.free(unsafe.Pointer(label))
+
+		if status := C.tibrvQueue_SetName(q.internal, label); status != C.TIBRV_OK {
+			return NewRvError(status)
+		}
 	}
 	return nil
 }
@@ -89,6 +106,22 @@ func (q *RvQueue) SetPriority(priority uint32) error {
 		return NewRvError(status)
 	}
 	return nil
+}
+
+// queueConfig Network Transport configuratio
+type queueConfig struct {
+	Label string
+}
+
+// QueueOption func type for alter default net transport options
+type QueueOption = func(t queueConfig) queueConfig
+
+// Label RendezVous bus service option
+func Label(label string) QueueOption {
+	return func(t queueConfig) queueConfig {
+		t.Label = label
+		return t
+	}
 }
 
 // RvQueueGroup event queue

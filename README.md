@@ -33,6 +33,38 @@ scripts/profile.bash
 ### Examples and tools:
 scripts/build.bash
 
+## Getting started
+
+### Publish a message
+```go
+    var transport tibrv.RvNetTransport
+
+    // Parameters are option, use
+    // Create() 
+    // for default values
+	err := transport.Create(
+		tibrv.Service("<service>"),
+		tibrv.Network("<network>"),
+		tibrv.Daemon("<daemon>"),
+		tibrv.Description("<description>"),
+    )
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(-1)
+    }   
+
+    var msg  tibrv.RvMessage
+    // [...] message composing
+
+    err = transport.Send(msg)
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(-1)
+    }   
+
+```
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
@@ -43,3 +75,14 @@ This project has been an exercise for improving my GO skills, wrapping up things
 
 The package has never been used, it needs deep testing.
 
+
+```mermaid
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+```

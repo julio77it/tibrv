@@ -8,7 +8,7 @@ import (
 func TestRvQueue(t *testing.T) {
 	var queue RvQueue
 
-	status := queue.Create()
+	status := queue.Create(Label("TEST_QUEUE"))
 	if status != nil {
 		t.Fatalf("Expected nil, got %v", status)
 	}

@@ -16,6 +16,8 @@ func main() {
 	flag.StringVar(&transportType, "type", "net", "Tibco RendezVous transport type [net,vect,cm,dq,ft]")
 	flag.Parse()
 
+	log.Printf("RVD %s %s %s", service, network, daemon)
+
 	var queue tibrv.RvQueue
 	var nettransport tibrv.RvNetTransport
 	var cmtransport tibrv.RvCmTransport
