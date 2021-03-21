@@ -78,36 +78,36 @@ func TestRvQueueGroup(t *testing.T) {
 	}
 
 	var transport RvNetTransport
-	err := transport.Create(
+	status = transport.Create(
 		Service(os.Getenv("TEST_SERVICE")),
 		Network(os.Getenv("TEST_NETWORK")),
 		Daemon(os.Getenv("TEST_DAEMON")),
 	)
-	if err != nil {
+	if status != nil {
 		t.Fatalf("Expected nil, got %v", TibrvTimeout)
 	}
 	subject := "TEST.QGROUP"
 	var listener RvListener
-	err = listener.Create(
+	status = listener.Create(
 		queue,
 		func(m *RvMessage) {},
 		transport,
 		subject,
 	)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
+	if status != nil {
+		t.Fatalf("Expected nil, got %v", status)
 	}
 	defer listener.Destroy()
 
 	var m RvMessage
 	m.Create()
 	status = m.SetSendSubject(subject)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
+	if status != nil {
+		t.Fatalf("Expected nil, got %v", status)
 	}
 	status = transport.Send(m)
-	if err != nil {
-		t.Fatalf("Expected nil, got %v", err)
+	if status != nil {
+		t.Fatalf("Expected nil, got %v", status)
 	}
 
 	status = group.Dispatch()

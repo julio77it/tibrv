@@ -13,7 +13,7 @@ type RvDqTransport struct {
 	internal C.tibrvcmTransport
 }
 
-// Create initialize a distribuited queue transport. Options: name, workerWeight, workerTasks, schedulerWeight, schedulerHeartbeat, schedulerActivation
+// Create initialize a distributed queue transport. Options: name, workerWeight, workerTasks, schedulerWeight, schedulerHeartbeat, schedulerActivation
 func (t *RvDqTransport) Create(transport *RvNetTransport, opts ...DqTransportOption) error {
 	conf := dqTransportConfig{
 		WorkerWeight:        C.TIBRVCM_DEFAULT_WORKER_WEIGHT,
@@ -76,7 +76,7 @@ func (t *RvDqTransport) Destroy() error {
 	return nil
 }
 
-// dqTransportConfig Distribuited Queue configuratiom
+// dqTransportConfig Distributed Queue configuratiom
 type dqTransportConfig struct {
 	Name                                    string
 	WorkerWeight, WorkerTasks               uint32
@@ -84,10 +84,10 @@ type dqTransportConfig struct {
 	SchedulerHeartbeat, SchedulerActivation float64
 }
 
-// DqTransportOption func type for alter default distribuited queue transport options
+// DqTransportOption func type for alter default distributed queue transport options
 type DqTransportOption = func(t dqTransportConfig) dqTransportConfig
 
-// Name Distribuited queue name option
+// Name Distributed queue name option
 func Name(name string) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.Name = name
@@ -95,7 +95,7 @@ func Name(name string) DqTransportOption {
 	}
 }
 
-// WorkerWeight Distribuited queue workerWeight option
+// WorkerWeight Distributed queue workerWeight option
 func WorkerWeight(workerWeight uint32) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.WorkerWeight = workerWeight
@@ -103,7 +103,7 @@ func WorkerWeight(workerWeight uint32) DqTransportOption {
 	}
 }
 
-// WorkerTasks Distribuited queue workerTasks option
+// WorkerTasks Distributed queue workerTasks option
 func WorkerTasks(workerTasks uint32) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.WorkerTasks = workerTasks
@@ -111,7 +111,7 @@ func WorkerTasks(workerTasks uint32) DqTransportOption {
 	}
 }
 
-// SchedulerWeight Distribuited queue schedulerWeight option
+// SchedulerWeight Distributed queue schedulerWeight option
 func SchedulerWeight(schedulerWeight uint16) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.SchedulerWeight = schedulerWeight
@@ -119,7 +119,7 @@ func SchedulerWeight(schedulerWeight uint16) DqTransportOption {
 	}
 }
 
-// SchedulerHeartbeat Distribuited queue schedulerHeartbeat option
+// SchedulerHeartbeat Distributed queue schedulerHeartbeat option
 func SchedulerHeartbeat(schedulerHeartbeat float64) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.SchedulerHeartbeat = schedulerHeartbeat
@@ -127,7 +127,7 @@ func SchedulerHeartbeat(schedulerHeartbeat float64) DqTransportOption {
 	}
 }
 
-// SchedulerActivation Distribuited queue schedulerActivation option
+// SchedulerActivation Distributed queue schedulerActivation option
 func SchedulerActivation(schedulerActivation float64) DqTransportOption {
 	return func(t dqTransportConfig) dqTransportConfig {
 		t.SchedulerActivation = schedulerActivation

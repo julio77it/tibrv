@@ -2,7 +2,7 @@ package tibrv
 
 /*
 	Choose between statical or dynamical linking to Tibco RendezVous libraries
-	Put at FIRST the choosen option
+	Put at FIRST the chosen option
 */
 
 /*
@@ -14,7 +14,7 @@ package tibrv
 */
 import "C"
 
-// Open init Tibco RendezVous Enviroment
+// Open init Tibco RendezVous Environment
 func Open() error {
 	if code := C.tibrv_Open(); code != C.TIBRV_OK {
 		return NewRvError(code)
@@ -22,7 +22,7 @@ func Open() error {
 	return nil
 }
 
-// Close destroy Tibco RendezVous Enviroment
+// Close destroy Tibco RendezVous Environment
 func Close() error {
 	if code := C.tibrv_Close(); code != C.TIBRV_OK {
 		return NewRvError(code)

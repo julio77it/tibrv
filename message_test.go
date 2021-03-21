@@ -154,7 +154,7 @@ func TestRvMessageInt8(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetInt8(name + name)
+	_, err = msg.GetInt8(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -181,7 +181,7 @@ func TestRvMessageInt16(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetInt16(name + name)
+	_, err = msg.GetInt16(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -208,7 +208,7 @@ func TestRvMessageInt32(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetInt32(name + name)
+	_, err = msg.GetInt32(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -262,7 +262,7 @@ func TestRvMessageUInt8(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetUInt8(name + name)
+	_, err = msg.GetUInt8(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -289,7 +289,7 @@ func TestRvMessageUInt16(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetUInt16(name + name)
+	_, err = msg.GetUInt16(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -316,7 +316,7 @@ func TestRvMessageUInt32(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetUInt32(name + name)
+	_, err = msg.GetUInt32(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -343,7 +343,7 @@ func TestRvMessageUInt64(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetUInt64(name + name)
+	_, err = msg.GetUInt64(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -370,7 +370,7 @@ func TestRvMessageFloat32(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %f, got %f", in, out)
 	}
-	out, err = msg.GetFloat32(name + name)
+	_, err = msg.GetFloat32(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -396,7 +396,7 @@ func TestRvMessageFloat64(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %f, got %f", in, out)
 	}
-	out, err = msg.GetFloat64(name + name)
+	_, err = msg.GetFloat64(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -460,7 +460,7 @@ func TestRvMessageStringArray(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetStringArray(name + name)
+	_, err = msg.GetStringArray(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -487,7 +487,7 @@ func TestRvMessageInt8Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetInt8Array(name + name)
+	_, err = msg.GetInt8Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -514,7 +514,7 @@ func TestRvMessageInt16Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetInt16Array(name + name)
+	_, err = msg.GetInt16Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -542,7 +542,7 @@ func TestRvMessageInt32Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetInt32Array(name + name)
+	_, err = msg.GetInt32Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -569,7 +569,7 @@ func TestRvMessageInt64Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetInt64Array(name + name)
+	_, err = msg.GetInt64Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -596,7 +596,7 @@ func TestRvMessageUInt8Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetUInt8Array(name + name)
+	_, err = msg.GetUInt8Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -623,7 +623,7 @@ func TestRvMessageUInt16Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetUInt16Array(name + name)
+	_, err = msg.GetUInt16Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -651,7 +651,7 @@ func TestRvMessageUInt32Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetUInt32Array(name + name)
+	_, err = msg.GetUInt32Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -678,7 +678,7 @@ func TestRvMessageUInt64Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetUInt64Array(name + name)
+	_, err = msg.GetUInt64Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -705,7 +705,7 @@ func TestRvMessageFloat32Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetFloat32Array(name + name)
+	_, err = msg.GetFloat32Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
@@ -732,7 +732,7 @@ func TestRvMessageFloat64Array(t *testing.T) {
 	if !reflect.DeepEqual(out, in) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
-	out, err = msg.GetFloat64Array(name + name)
+	_, err = msg.GetFloat64Array(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}

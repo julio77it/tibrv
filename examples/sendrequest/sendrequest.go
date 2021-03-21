@@ -49,10 +49,10 @@ func main() {
 
 	sendSubj, _ := request.GetSendSubject()
 	replySubj, _ := request.GetReplySubject()
-	log.Printf("INPUT |%s|%s|%s|\n", sendSubj, replySubj, input)
+	log.Printf("INPUT  |%s|%s|%s|\n", sendSubj, replySubj, input)
 	sendSubj, _ = reply.GetSendSubject()
 	replySubj, _ = reply.GetReplySubject()
-	log.Printf("OUPUT |%s|%s|%s|\n", sendSubj, replySubj, output)
+	log.Printf("OUTPUT |%s|%s|%s|\n", sendSubj, replySubj, output)
 
 	if output != input {
 		log.Printf("Expected %s, got %s\n", input, output)

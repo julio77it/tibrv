@@ -67,7 +67,7 @@ func TestFtMember(t *testing.T) {
 	}(&output, queue, transport, &listener, t)
 
 	var member FtMember
-	err = member.Create(
+	_ = member.Create(
 		queue,
 		callback,
 		transport,

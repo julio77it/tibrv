@@ -1224,9 +1224,9 @@ func (m RvMessage) JSON() (string, error) {
 		}
 		if FieldTypeMsg == fieldType {
 			fieldValue, err := m.GetRvMessage(fieldName)
-			// if err != nil {
-			// 	return "", err
-			// }
+			if err != nil {
+			 	return "", err
+			}
 			defer fieldValue.Destroy()
 
 			fieldValueText, err := fieldValue.JSON()
