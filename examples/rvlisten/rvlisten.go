@@ -3,17 +3,19 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/julio77it/tibrv"
 	"log"
+
+	"github.com/julio77it/tibrv"
 )
 
 func main() {
-	var service, network, daemon, subject, transportType string
+	var service, network, daemon, subject, transportType, format string
 	flag.StringVar(&service, "service", "", "Tibco RendezVous Bus service")
 	flag.StringVar(&network, "network", "", "Tibco RendezVous Bus network")
 	flag.StringVar(&daemon, "daemon", "", "Tibco RendezVous Bus daemon")
 	flag.StringVar(&subject, "subject", ">", "Tibco RendezVous listening subject")
 	flag.StringVar(&transportType, "type", "net", "Tibco RendezVous transport type [net,vect,cm,dq,ft]")
+	flag.StringVar(&format, "format", "msg", "choose message format to print [msg,json]")
 	flag.Parse()
 
 	log.Printf("RVD %s %s %s", service, network, daemon)
@@ -38,7 +40,14 @@ func main() {
 		sendSubject, _ := m.GetSendSubject()
 		replySubject, _ := m.GetReplySubject()
 
-		log.Printf("%s - %s - %s\n", sendSubject, replySubject, *m)
+		switch format {
+		case "msg":
+			log.Printf("%s - %s - %s\n", sendSubject, replySubject, *m)
+
+		case "json":
+			j, _ := m.JSON()
+			log.Printf("%s - %s - %s\n", sendSubject, replySubject, j)
+		}
 	}
 
 	if transportType == "net" {
