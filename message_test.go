@@ -402,6 +402,37 @@ func TestRvMessageFloat64(t *testing.T) {
 	}
 }
 
+func TestRvMessageRemove(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	var in int8 = 126
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetInt8(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetInt8(name)
+	if err != nil {
+		t.Fatalf("Expected %d, got %v", in, err)
+	}
+	if out != in {
+		t.Fatalf("Expected %d, got %d", in, out)
+	}
+	err = msg.RemoveField(name)
+	if err != nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+	_, err = msg.GetInt8(name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
 func TestRvMessageMsg(t *testing.T) {
 	var msg RvMessage
 

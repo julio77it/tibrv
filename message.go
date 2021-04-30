@@ -1206,6 +1206,20 @@ func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float6
 	return nil
 }
 
+// RemoveField remove field by name
+func (m *RvMessage) RemoveField(name string) error {
+	return m.removeField(name, 0)
+}
+func (m *RvMessage) removeField(name string, fieldID FieldID) error {
+	fieldName := C.CString(name)
+	defer C.free(unsafe.Pointer(fieldName))
+
+	if status := C.tibrvMsg_RemoveFieldEx(m.internal, fieldName, C.ushort(fieldID)); status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
 // JSON returns a json string representation of the message
 func (m RvMessage) JSON() (string, error) {
 
@@ -1225,7 +1239,7 @@ func (m RvMessage) JSON() (string, error) {
 		if FieldTypeMsg == fieldType {
 			fieldValue, err := m.GetRvMessage(fieldName)
 			if err != nil {
-			 	return "", err
+				return "", err
 			}
 			defer fieldValue.Destroy()
 
