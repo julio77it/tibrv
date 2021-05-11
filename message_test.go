@@ -1119,6 +1119,26 @@ func TestRvMessageJSON(t *testing.T) {
 	}
 }
 
+func TestJSONRvMessage(t *testing.T) {
+	var input string = "{\"nint8\": {\"inner\": \"abc\"}}"
+	var output string
+
+	var msg *RvMessage
+	var err error
+
+	if msg, err = JSON(input); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	defer msg.Destroy()
+
+	if output, err = msg.JSON(); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if input != output {
+		t.Fatalf("Expected %s, got %s", input, output)
+	}
+}
+
 func replier(subject string) {
 	var queue RvQueue
 	queue.Create()

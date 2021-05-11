@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/julio77it/tibrv"
 )
 
@@ -47,4 +48,13 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(output)
+
+	var rmsg *tibrv.RvMessage
+
+	rmsg, err = tibrv.JSON(output)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(*rmsg)
 }

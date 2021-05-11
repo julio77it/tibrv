@@ -8,6 +8,7 @@ package tibrv
 import "C"
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"unsafe"
 )
@@ -1462,4 +1463,73 @@ func (m RvMessage) JSON() (string, error) {
 	}
 	fmt.Fprint(result, "}")
 	return result.String(), nil
+}
+
+type jdoc = map[string]interface{}
+
+func jdoc2RvMessage(doc jdoc) (*RvMessage, error) {
+	var msg RvMessage
+	if err := msg.Create(); err != nil {
+		return nil, err
+	}
+	for k, v := range doc {
+		switch v.(type) {
+		case string:
+			err := msg.SetString(k, v.(string))
+			if err != nil {
+				return nil, err
+			}
+		case float64:
+			err := msg.SetFloat64(k, v.(float64))
+			if err != nil {
+				return nil, err
+			}
+		case []interface{}:
+			l := len(v.([]interface{}))
+			if l == 0 {
+				continue
+			}
+			switch v.([]interface{})[0].(type) {
+			case string:
+				slice := make([]string, l, l)
+				for i, vv := range v.([]interface{}) {
+					slice[i] = vv.(string)
+				}
+				err := msg.SetStringArray(k, slice)
+				if err != nil {
+					return nil, err
+				}
+			case float64:
+				slice := make([]float64, l, l)
+				for i, vv := range v.([]interface{}) {
+					slice[i] = vv.(float64)
+				}
+				err := msg.SetFloat64Array(k, slice)
+				if err != nil {
+					return nil, err
+				}
+			}
+		case jdoc:
+			m, err := jdoc2RvMessage(v.(jdoc))
+			if err != nil {
+				return nil, err
+			}
+			err = msg.SetRvMessage(k, *m)
+			if err != nil {
+				return nil, err
+			}
+		default:
+			fmt.Println("BOH")
+		}
+	}
+	return &msg, nil
+}
+
+func JSON(doc string) (*RvMessage, error) {
+	res := make(jdoc)
+
+	if err := json.Unmarshal([]byte(doc), &res); err != nil {
+		return nil, err
+	}
+	return jdoc2RvMessage(res)
 }
