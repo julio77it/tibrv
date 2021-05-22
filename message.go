@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"unsafe"
 )
 
@@ -1472,7 +1473,13 @@ func jdoc2RvMessage(doc jdoc) (*RvMessage, error) {
 	if err := msg.Create(); err != nil {
 		return nil, err
 	}
-	for k, v := range doc {
+	keys := make([]string, 0, len(doc))
+	for k := range doc {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := doc[k]
 		switch v.(type) {
 		case string:
 			err := msg.SetString(k, v.(string))
