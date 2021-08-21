@@ -76,15 +76,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 This project has been an exercise for improving my GO skills, wrapping up things I already knew.
 
 The package has never been used, it needs deep testing.
-
-
-```mermaid
-stateDiagram-v2
-    [*] --> Still
-    Still --> [*]
-
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]
-```
