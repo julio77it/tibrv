@@ -8,6 +8,7 @@ package tibrv
 void cmcallbackProxy(tibrvcmEvent event,
 				     tibrvMsg     message,
 					 void*        closure);
+					 
 */
 import "C"
 import (
