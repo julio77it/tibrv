@@ -1532,6 +1532,7 @@ func jdoc2RvMessage(doc jdoc) (*RvMessage, error) {
 	return &msg, nil
 }
 
+// JSON convert a json string to RvMessage
 func JSON(doc string) (*RvMessage, error) {
 	res := make(jdoc)
 
