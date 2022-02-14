@@ -156,6 +156,22 @@ func (m RvMessage) GetNumFields() (uint, error) {
 	return uint(n), nil
 }
 
+// GetBool read a 8bit integer field
+func (m RvMessage) GetBool(name string) (bool, error) {
+	return m.getBool(name, 0)
+}
+func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
+	cn := C.CString(name)
+	defer C.free(unsafe.Pointer(cn))
+	var cv C.bool
+
+	status := C.tibrvMsg_GetBoolEx(m.internal, cn, &cv, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return 0, NewRvError(status)
+	}
+	return bool(cv), nil
+}
+
 // GetInt8 read a 8bit integer field
 func (m RvMessage) GetInt8(name string) (int8, error) {
 	return m.getInt8(name, 0)
@@ -282,6 +298,21 @@ func (m RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 		return 0, NewRvError(status)
 	}
 	return uint64(cv), nil
+}
+
+// SetBool add a 8bit integer field
+func (m *RvMessage) SetBool(name string, value bool) error {
+	return m.setInt8(name, 0, value)
+}
+func (m *RvMessage) setBool(name string, fieldID FieldID, value bool) error {
+	cn := C.CString(name)
+	defer C.free(unsafe.Pointer(cn))
+
+	status := C.tibrvMsg_UpdateBoolEx(m.internal, cn, C.bool(value), C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
 }
 
 // SetInt8 add a 8bit integer field
@@ -1256,6 +1287,12 @@ func (m RvMessage) JSON() (string, error) {
 				return "", err
 			}
 			fmt.Fprintf(result, "\"%s\": \"%s\"", fieldName, fieldValue)
+		} else if FieldTypeBool == fieldType {
+			fieldValue, err := m.GetBool(fieldName)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
 		} else if FieldTypeInt8 == fieldType {
 			fieldValue, err := m.GetInt8(fieldName)
 			if err != nil {
@@ -1481,6 +1518,11 @@ func jdoc2RvMessage(doc jdoc) (*RvMessage, error) {
 	for _, k := range keys {
 		v := doc[k]
 		switch v.(type) {
+		case bool:
+			err := msg.SetBool(k, v.(bool))
+			if err != nil {
+				return nil, err
+			}
 		case string:
 			err := msg.SetString(k, v.(string))
 			if err != nil {
