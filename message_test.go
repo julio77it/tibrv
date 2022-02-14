@@ -133,7 +133,7 @@ func TestRvMessageString(t *testing.T) {
 	}
 }
 
-func TestRvMessageBool(t *testing.T) {
+func TestRvMessageBoolTrue(t *testing.T) {
 	var msg RvMessage
 
 	name := "fieldName"
@@ -149,10 +149,37 @@ func TestRvMessageBool(t *testing.T) {
 
 	out, err := msg.GetBool(name)
 	if err != nil {
-		t.Fatalf("Expected %d, got %v", in, err)
+		t.Fatalf("Expected %v, got %v", in, err)
 	}
 	if out != in {
-		t.Fatalf("Expected %d, got %d", in, out)
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	_, err = msg.GetBool(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageBoolFalse(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	var in bool = false
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetBool(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetBool(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if out != in {
+		t.Fatalf("Expected %v, got %v", in, out)
 	}
 	_, err = msg.GetBool(name + name)
 	if err == nil {

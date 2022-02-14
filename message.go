@@ -163,13 +163,13 @@ func (m RvMessage) GetBool(name string) (bool, error) {
 func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn))
-	var cv C.schar
+	var cv C.tibrv_bool
 
 	status := C.tibrvMsg_GetBoolEx(m.internal, cn, &cv, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
-		return 0, NewRvError(status)
+		return false, NewRvError(status)
 	}
-	return bool(cv), nil
+	return cv == C.TIBRV_TRUE, nil
 }
 
 // GetInt8 read a 8bit integer field
@@ -302,13 +302,18 @@ func (m RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 
 // SetBool add a 8bit integer field
 func (m *RvMessage) SetBool(name string, value bool) error {
-	return m.setInt8(name, 0, value)
+	return m.setBool(name, 0, value)
 }
 func (m *RvMessage) setBool(name string, fieldID FieldID, value bool) error {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn))
 
-	status := C.tibrvMsg_UpdateBoolEx(m.internal, cn, C.schar(value), C.ushort(fieldID))
+	var v C.tibrv_bool = C.TIBRV_FALSE
+
+	if value {
+		v = C.TIBRV_TRUE
+	}
+	status := C.tibrvMsg_UpdateBoolEx(m.internal, cn, v, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
@@ -1292,7 +1297,7 @@ func (m RvMessage) JSON() (string, error) {
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			fmt.Fprintf(result, "\"%s\": %v", fieldName, fieldValue)
 		} else if FieldTypeInt8 == fieldType {
 			fieldValue, err := m.GetInt8(fieldName)
 			if err != nil {
