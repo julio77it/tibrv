@@ -163,7 +163,7 @@ func (m RvMessage) GetBool(name string) (bool, error) {
 func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn))
-	var cv C.bool
+	var cv C.schar
 
 	status := C.tibrvMsg_GetBoolEx(m.internal, cn, &cv, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -308,7 +308,7 @@ func (m *RvMessage) setBool(name string, fieldID FieldID, value bool) error {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn))
 
-	status := C.tibrvMsg_UpdateBoolEx(m.internal, cn, C.bool(value), C.ushort(fieldID))
+	status := C.tibrvMsg_UpdateBoolEx(m.internal, cn, C.schar(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
