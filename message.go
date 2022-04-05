@@ -74,7 +74,7 @@ func (m RvMessage) String() string {
 // SetSendSubject set the publish subject. Used for publish/subscribe and request/reply (request subject)
 func (m *RvMessage) SetSendSubject(subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 	status := C.tibrvMsg_SetSendSubject(m.internal, cstr)
 
 	if status != C.TIBRV_OK {
@@ -97,7 +97,7 @@ func (m *RvMessage) GetSendSubject() (string, error) {
 // SetReplySubject set the reply subject. Used for request/reply (reply subject)
 func (m *RvMessage) SetReplySubject(subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 	status := C.tibrvMsg_SetReplySubject(m.internal, cstr)
 
 	if status != C.TIBRV_OK {
@@ -162,7 +162,7 @@ func (m RvMessage) GetBool(name string) (bool, error) {
 }
 func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.tibrv_bool
 
 	status := C.tibrvMsg_GetBoolEx(m.internal, cn, &cv, C.ushort(fieldID))
@@ -178,7 +178,7 @@ func (m RvMessage) GetInt8(name string) (int8, error) {
 }
 func (m RvMessage) getInt8(name string, fieldID FieldID) (int8, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.schar
 
 	status := C.tibrvMsg_GetI8Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -194,7 +194,7 @@ func (m RvMessage) GetInt16(name string) (int16, error) {
 }
 func (m RvMessage) getInt16(name string, fieldID FieldID) (int16, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.short
 
 	status := C.tibrvMsg_GetI16Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -210,7 +210,7 @@ func (m RvMessage) GetInt32(name string) (int32, error) {
 }
 func (m RvMessage) getInt32(name string, fieldID FieldID) (int32, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.int
 
 	status := C.tibrvMsg_GetI32Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -226,7 +226,7 @@ func (m RvMessage) GetInt64(name string) (int64, error) {
 }
 func (m RvMessage) getInt64(name string, fieldID FieldID) (int64, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.longlong
 
 	status := C.tibrvMsg_GetI64Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -242,7 +242,7 @@ func (m RvMessage) GetUInt8(name string) (uint8, error) {
 }
 func (m RvMessage) getUInt8(name string, fieldID FieldID) (uint8, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.uchar
 
 	status := C.tibrvMsg_GetU8Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -258,7 +258,7 @@ func (m RvMessage) GetUInt16(name string) (uint16, error) {
 }
 func (m RvMessage) getUInt16(name string, fieldID FieldID) (uint16, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.ushort
 
 	status := C.tibrvMsg_GetU16Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -274,7 +274,7 @@ func (m RvMessage) GetUInt32(name string) (uint32, error) {
 }
 func (m RvMessage) getUInt32(name string, fieldID FieldID) (uint32, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.uint
 
 	status := C.tibrvMsg_GetU32Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -290,7 +290,7 @@ func (m RvMessage) GetUInt64(name string) (uint64, error) {
 }
 func (m RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.ulonglong
 
 	status := C.tibrvMsg_GetU64Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -306,7 +306,7 @@ func (m *RvMessage) SetBool(name string, value bool) error {
 }
 func (m *RvMessage) setBool(name string, fieldID FieldID, value bool) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	var v C.tibrv_bool = C.TIBRV_FALSE
 
@@ -326,7 +326,7 @@ func (m *RvMessage) SetInt8(name string, value int8) error {
 }
 func (m *RvMessage) setInt8(name string, fieldID FieldID, value int8) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateI8Ex(m.internal, cn, C.schar(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -341,7 +341,7 @@ func (m *RvMessage) SetInt16(name string, value int16) error {
 }
 func (m *RvMessage) setInt16(name string, fieldID FieldID, value int16) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateI16Ex(m.internal, cn, C.short(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -356,7 +356,7 @@ func (m *RvMessage) SetInt32(name string, value int32) error {
 }
 func (m *RvMessage) setInt32(name string, fieldID FieldID, value int32) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateI32Ex(m.internal, cn, C.int(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -371,7 +371,7 @@ func (m *RvMessage) SetInt64(name string, value int64) error {
 }
 func (m *RvMessage) setInt64(name string, fieldID FieldID, value int64) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateI64Ex(m.internal, cn, C.longlong(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -386,7 +386,7 @@ func (m *RvMessage) SetUInt8(name string, value uint8) error {
 }
 func (m *RvMessage) setUInt8(name string, fieldID FieldID, value uint8) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateU8Ex(m.internal, cn, C.uchar(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -401,7 +401,7 @@ func (m *RvMessage) SetUInt16(name string, value uint16) error {
 }
 func (m *RvMessage) setUInt16(name string, fieldID FieldID, value uint16) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateU16Ex(m.internal, cn, C.ushort(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -416,7 +416,7 @@ func (m *RvMessage) SetUInt32(name string, value uint32) error {
 }
 func (m *RvMessage) setUInt32(name string, fieldID FieldID, value uint32) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateU32Ex(m.internal, cn, C.uint(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -431,7 +431,7 @@ func (m *RvMessage) SetUInt64(name string, value uint64) error {
 }
 func (m *RvMessage) setUInt64(name string, fieldID FieldID, value uint64) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateU64Ex(m.internal, cn, C.ulonglong(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -446,7 +446,7 @@ func (m RvMessage) GetFloat32(name string) (float32, error) {
 }
 func (m RvMessage) getFloat32(name string, fieldID FieldID) (float32, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.float
 
 	status := C.tibrvMsg_GetF32Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -462,7 +462,7 @@ func (m *RvMessage) SetFloat32(name string, value float32) error {
 }
 func (m *RvMessage) setFloat32(name string, fieldID FieldID, value float32) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateF32Ex(m.internal, cn, C.float(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -477,7 +477,7 @@ func (m RvMessage) GetFloat64(name string) (float64, error) {
 }
 func (m RvMessage) getFloat64(name string, fieldID FieldID) (float64, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.double
 
 	status := C.tibrvMsg_GetF64Ex(m.internal, cn, &cv, C.ushort(fieldID))
@@ -493,7 +493,7 @@ func (m *RvMessage) SetFloat64(name string, value float64) error {
 }
 func (m *RvMessage) setFloat64(name string, fieldID FieldID, value float64) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateF64Ex(m.internal, cn, C.double(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -508,7 +508,7 @@ func (m RvMessage) GetString(name string) (string, error) {
 }
 func (m RvMessage) getString(name string, fieldID FieldID) (string, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv *C.char
 
 	status := C.tibrvMsg_GetStringEx(m.internal, cn, &cv, C.ushort(fieldID))
@@ -524,9 +524,9 @@ func (m *RvMessage) SetString(name string, value string) error {
 }
 func (m *RvMessage) setString(name string, fieldID FieldID, value string) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	cv := C.CString(value)
-	defer C.free(unsafe.Pointer(cv))
+	defer C.free(unsafe.Pointer(cv)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateStringEx(m.internal, cn, cv, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -541,7 +541,7 @@ func (m RvMessage) GetStringArray(name string) ([]string, error) {
 }
 func (m RvMessage) getStringArray(name string, fieldID FieldID) ([]string, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues **C.char
 	var arrayLen C.uint
@@ -555,7 +555,7 @@ func (m RvMessage) getStringArray(name string, fieldID FieldID) ([]string, error
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = C.GoString(*(**C.char)(itemPointer))
 	}
@@ -568,21 +568,21 @@ func (m *RvMessage) SetStringArray(name string, value []string) error {
 }
 func (m *RvMessage) setStringArray(name string, fieldID FieldID, value []string) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var sizer *C.char
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(sizer))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(sizer)))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                              //#nosec G103 -- unsafe needed by CGO
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer)) //#nosec G103 -- unsafe needed by CGO
 
 		cstr := C.CString(value[i]) // free at the end of the function
 		// cast & conversion from slice position to bytes
 		//int8(*(*C.schar)(itemPointer))
-		*(**C.char)(unsafe.Pointer(itemPointer)) = cstr
+		*(**C.char)(unsafe.Pointer(itemPointer)) = cstr //#nosec G103 -- unsafe needed by CGO
 	}
 	status := C.tibrvMsg_UpdateStringArrayEx(
 		m.internal,
@@ -593,10 +593,10 @@ func (m *RvMessage) setStringArray(name string, fieldID FieldID, value []string)
 	)
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(sizer)) //#nosec G103 -- unsafe needed by CGO
 
 		// free
-		C.free(unsafe.Pointer(*(**C.char)(itemPointer)))
+		C.free(unsafe.Pointer(*(**C.char)(itemPointer))) //#nosec G103 -- unsafe needed by CGO
 	}
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
@@ -610,7 +610,7 @@ func (m RvMessage) GetRvMessage(name string) (RvMessage, error) {
 }
 func (m RvMessage) getRvMessage(name string, fieldID FieldID) (RvMessage, error) {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.tibrvMsg
 	var result RvMessage
 
@@ -636,7 +636,7 @@ func (m *RvMessage) SetRvMessage(name string, value RvMessage) error {
 }
 func (m *RvMessage) setRvMessage(name string, fieldID FieldID, value RvMessage) error {
 	cn := C.CString(name)
-	defer C.free(unsafe.Pointer(cn))
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvMsg_UpdateMsgEx(m.internal, cn, C.tibrvMsg(value.internal), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -647,7 +647,7 @@ func (m *RvMessage) setRvMessage(name string, fieldID FieldID, value RvMessage) 
 
 // arrayItemPositionPointer pointer arithmetics using bytes, index and typesize
 func arrayItemPositionPointer(base uintptr, index uintptr, itemSize uintptr) unsafe.Pointer {
-	return unsafe.Pointer(base + index*itemSize)
+	return unsafe.Pointer(base + index*itemSize) //#nosec G103 -- unsafe needed by CGO
 }
 
 // GetInt8Array read a 8bit integer array field
@@ -656,7 +656,7 @@ func (m RvMessage) GetInt8Array(name string) ([]int8, error) {
 }
 func (m RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.schar
 	var arrayLen C.uint
@@ -670,7 +670,7 @@ func (m RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = int8(*(*C.schar)(itemPointer))
 	}
@@ -683,18 +683,18 @@ func (m *RvMessage) SetInt8Array(name string, value []int8) error {
 }
 func (m *RvMessage) setInt8Array(name string, fieldID FieldID, value []int8) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
 		//int8(*(*C.schar)(itemPointer))
-		*(*C.schar)(unsafe.Pointer(itemPointer)) = C.schar(value[j])
+		*(*C.schar)(unsafe.Pointer(itemPointer)) = C.schar(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateI8ArrayEx(
@@ -716,7 +716,7 @@ func (m RvMessage) GetInt16Array(name string) ([]int16, error) {
 }
 func (m RvMessage) getInt16Array(name string, fieldID FieldID) ([]int16, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.short
 	var arrayLen C.uint
@@ -730,7 +730,7 @@ func (m RvMessage) getInt16Array(name string, fieldID FieldID) ([]int16, error) 
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = int16(*(*C.short)(itemPointer))
 	}
@@ -743,18 +743,18 @@ func (m *RvMessage) SetInt16Array(name string, value []int16) error {
 }
 func (m *RvMessage) setInt16Array(name string, fieldID FieldID, value []int16) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
 		//int8(*(*C.schar)(itemPointer))
-		*(*C.short)(unsafe.Pointer(itemPointer)) = C.short(value[j])
+		*(*C.short)(unsafe.Pointer(itemPointer)) = C.short(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateI16ArrayEx(
@@ -776,7 +776,7 @@ func (m RvMessage) GetInt32Array(name string) ([]int32, error) {
 }
 func (m RvMessage) getInt32Array(name string, fieldID FieldID) ([]int32, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.int
 	var arrayLen C.uint
@@ -790,7 +790,7 @@ func (m RvMessage) getInt32Array(name string, fieldID FieldID) ([]int32, error) 
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = int32(*(*C.int)(itemPointer))
 	}
@@ -803,18 +803,18 @@ func (m *RvMessage) SetInt32Array(name string, value []int32) error {
 }
 func (m *RvMessage) setInt32Array(name string, fieldID FieldID, value []int32) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
 		//int8(*(*C.schar)(itemPointer))
-		*(*C.int)(unsafe.Pointer(itemPointer)) = C.int(value[j])
+		*(*C.int)(unsafe.Pointer(itemPointer)) = C.int(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateI32ArrayEx(
@@ -836,7 +836,7 @@ func (m RvMessage) GetInt64Array(name string) ([]int64, error) {
 }
 func (m RvMessage) getInt64Array(name string, fieldID FieldID) ([]int64, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.longlong
 	var arrayLen C.uint
@@ -850,7 +850,7 @@ func (m RvMessage) getInt64Array(name string, fieldID FieldID) ([]int64, error) 
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = int64(*(*C.longlong)(itemPointer))
 	}
@@ -863,18 +863,18 @@ func (m *RvMessage) SetInt64Array(name string, value []int64) error {
 }
 func (m *RvMessage) setInt64Array(name string, fieldID FieldID, value []int64) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
 		//int8(*(*C.schar)(itemPointer))
-		*(*C.longlong)(unsafe.Pointer(itemPointer)) = C.longlong(value[j])
+		*(*C.longlong)(unsafe.Pointer(itemPointer)) = C.longlong(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateI64ArrayEx(
@@ -896,7 +896,7 @@ func (m RvMessage) GetUInt8Array(name string) ([]uint8, error) {
 }
 func (m RvMessage) getUInt8Array(name string, fieldID FieldID) ([]uint8, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.uchar
 	var arrayLen C.uint
@@ -910,7 +910,7 @@ func (m RvMessage) getUInt8Array(name string, fieldID FieldID) ([]uint8, error) 
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = uint8(*(*C.schar)(itemPointer))
 	}
@@ -923,17 +923,17 @@ func (m *RvMessage) SetUInt8Array(name string, value []uint8) error {
 }
 func (m *RvMessage) setUInt8Array(name string, fieldID FieldID, value []uint8) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.uchar)(unsafe.Pointer(itemPointer)) = C.uchar(value[j])
+		*(*C.uchar)(unsafe.Pointer(itemPointer)) = C.uchar(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateU8ArrayEx(
@@ -955,7 +955,7 @@ func (m RvMessage) GetUInt16Array(name string) ([]uint16, error) {
 }
 func (m RvMessage) getUInt16Array(name string, fieldID FieldID) ([]uint16, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.ushort
 	var arrayLen C.uint
@@ -969,7 +969,7 @@ func (m RvMessage) getUInt16Array(name string, fieldID FieldID) ([]uint16, error
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = uint16(*(*C.ushort)(itemPointer))
 	}
@@ -982,17 +982,17 @@ func (m *RvMessage) SetUInt16Array(name string, value []uint16) error {
 }
 func (m *RvMessage) setUInt16Array(name string, fieldID FieldID, value []uint16) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.ushort)(unsafe.Pointer(itemPointer)) = C.ushort(value[j])
+		*(*C.ushort)(unsafe.Pointer(itemPointer)) = C.ushort(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateU16ArrayEx(
@@ -1014,7 +1014,7 @@ func (m RvMessage) GetUInt32Array(name string) ([]uint32, error) {
 }
 func (m RvMessage) getUInt32Array(name string, fieldID FieldID) ([]uint32, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.uint
 	var arrayLen C.uint
@@ -1028,7 +1028,7 @@ func (m RvMessage) getUInt32Array(name string, fieldID FieldID) ([]uint32, error
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = uint32(*(*C.uint)(itemPointer))
 	}
@@ -1041,17 +1041,17 @@ func (m *RvMessage) SetUInt32Array(name string, value []uint32) error {
 }
 func (m *RvMessage) setUInt32Array(name string, fieldID FieldID, value []uint32) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.uint)(unsafe.Pointer(itemPointer)) = C.uint(value[j])
+		*(*C.uint)(unsafe.Pointer(itemPointer)) = C.uint(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateU32ArrayEx(
@@ -1073,7 +1073,7 @@ func (m RvMessage) GetUInt64Array(name string) ([]uint64, error) {
 }
 func (m RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.ulonglong
 	var arrayLen C.uint
@@ -1087,7 +1087,7 @@ func (m RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, error
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = uint64(*(*C.ulonglong)(itemPointer))
 	}
@@ -1100,17 +1100,17 @@ func (m *RvMessage) SetUInt64Array(name string, value []uint64) error {
 }
 func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.ulonglong)(unsafe.Pointer(itemPointer)) = C.ulonglong(value[j])
+		*(*C.ulonglong)(unsafe.Pointer(itemPointer)) = C.ulonglong(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateU64ArrayEx(
@@ -1132,7 +1132,7 @@ func (m RvMessage) GetFloat32Array(name string) ([]float32, error) {
 }
 func (m RvMessage) getFloat32Array(name string, fieldID FieldID) ([]float32, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.float
 	var arrayLen C.uint
@@ -1146,7 +1146,7 @@ func (m RvMessage) getFloat32Array(name string, fieldID FieldID) ([]float32, err
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = float32(*(*C.float)(itemPointer))
 	}
@@ -1159,17 +1159,17 @@ func (m *RvMessage) SetFloat32Array(name string, value []float32) error {
 }
 func (m *RvMessage) setFloat32Array(name string, fieldID FieldID, value []float32) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.float)(unsafe.Pointer(itemPointer)) = C.float(value[j])
+		*(*C.float)(unsafe.Pointer(itemPointer)) = C.float(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateF32ArrayEx(
@@ -1191,7 +1191,7 @@ func (m RvMessage) GetFloat64Array(name string) ([]float64, error) {
 }
 func (m RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, error) {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	var arrayValues *C.double
 	var arrayLen C.uint
@@ -1205,7 +1205,7 @@ func (m RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, err
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
 		result[i] = float64(*(*C.double)(itemPointer))
 	}
@@ -1218,17 +1218,17 @@ func (m *RvMessage) SetFloat64Array(name string, value []float64) error {
 }
 func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float64) error {
 	arrayName := C.CString(name)
-	defer C.free(unsafe.Pointer(arrayName))
+	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0]))))
-	defer C.free(unsafe.Pointer(arrayValues))
+	arrayValues := C.malloc(C.ulong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
-		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0]))
+		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.double)(unsafe.Pointer(itemPointer)) = C.double(value[j])
+		*(*C.double)(unsafe.Pointer(itemPointer)) = C.double(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateF64ArrayEx(
@@ -1250,7 +1250,7 @@ func (m *RvMessage) RemoveField(name string) error {
 }
 func (m *RvMessage) removeField(name string, fieldID FieldID) error {
 	fieldName := C.CString(name)
-	defer C.free(unsafe.Pointer(fieldName))
+	defer C.free(unsafe.Pointer(fieldName)) //#nosec G103 -- unsafe needed by CGO
 
 	if status := C.tibrvMsg_RemoveFieldEx(m.internal, fieldName, C.ushort(fieldID)); status != C.TIBRV_OK {
 		return NewRvError(status)

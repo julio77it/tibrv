@@ -8,12 +8,13 @@ package tibrv
 void cmcallbackProxy(tibrvcmEvent event,
 				     tibrvMsg     message,
 					 void*        closure);
-					 
+
 */
 import "C"
 import (
-	"github.com/mattn/go-pointer"
 	"unsafe"
+
+	"github.com/mattn/go-pointer"
 )
 
 // RvCmListener event for listening on subject
@@ -25,19 +26,23 @@ type RvCmListener struct {
 func cmcallbackProxy(cEvent C.tibrvcmEvent, cMessage C.tibrvMsg, closure unsafe.Pointer) {
 	var msg RvMessage
 
-	msg.create(cMessage)
+	if err := msg.create(cMessage); err != nil {
+		panic(err)
+	}
 
 	callback := *pointer.Restore(closure).(*RvCallback)
 
 	callback(&msg)
 
-	msg.Destroy()
+	if err := msg.Destroy(); err != nil {
+		panic(err)
+	}
 }
 
 // Create initialize listener and start to collect message in queue
 func (l *RvCmListener) Create(queue RvQueue, callback RvCallback, transport RvCmTransport, subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvcmEvent_CreateListener(
 		&l.internal,

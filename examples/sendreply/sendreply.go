@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/julio77it/tibrv"
 	"log"
+
+	"github.com/julio77it/tibrv"
 )
 
 func main() {
@@ -27,7 +28,9 @@ func main() {
 	var callback tibrv.RvCallback = func(t *tibrv.RvNetTransport) func(msg *tibrv.RvMessage) {
 		return func(imsg *tibrv.RvMessage) {
 			var omsg tibrv.RvMessage
-			omsg.Create()
+			if err := omsg.Create(); err != nil {
+				panic(err)
+			}
 			defer omsg.Destroy()
 			e := omsg.SetInt32("Integer32bit", -25)
 			if e != nil {
@@ -60,6 +63,8 @@ func main() {
 	defer listener.Destroy()
 
 	for {
-		queue.Dispatch()
+		if err := queue.Dispatch(); err != nil {
+			panic(err)
+		}
 	}
 }

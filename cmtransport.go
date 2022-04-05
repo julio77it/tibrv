@@ -78,9 +78,9 @@ func (t RvCmTransport) SendReply(res, req RvMessage) error {
 // AddListener request-reply protocol : send the response to a message
 func (t RvCmTransport) AddListener(session, subject string) error {
 	csession := C.CString(session)
-	defer C.free(unsafe.Pointer(csession))
+	defer C.free(unsafe.Pointer(csession)) //#nosec G103 -- unsafe needed by CGO
 	csubject := C.CString(subject)
-	defer C.free(unsafe.Pointer(csubject))
+	defer C.free(unsafe.Pointer(csubject)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvcmTransport_AddListener(t.internal, csession, csubject)
 

@@ -30,10 +30,14 @@ func main() {
 	var dqlistener tibrv.RvDqListener
 	var ftmember tibrv.FtMember
 
-	queue.Create()
+	if err := queue.Create(); err != nil {
+		panic(err)
+	}
 	defer queue.Destroy()
 
-	nettransport.Create(tibrv.Service(service), tibrv.Network(network), tibrv.Daemon(daemon))
+	if err := nettransport.Create(tibrv.Service(service), tibrv.Network(network), tibrv.Daemon(daemon)); err != nil {
+		panic(err)
+	}
 	defer nettransport.Destroy()
 
 	callback := func(m *tibrv.RvMessage) {
@@ -51,43 +55,61 @@ func main() {
 	}
 
 	if transportType == "net" {
-		netlistener.Create(queue, callback, nettransport, subject)
+		if err := netlistener.Create(queue, callback, nettransport, subject); err != nil {
+			panic(err)
+		}
 		fmt.Println("tibrv.RvNetTransport")
 	} else if transportType == "vect" {
-		vectlistener.Create(queue, callback, nettransport, subject)
+		if err := vectlistener.Create(queue, callback, nettransport, subject); err != nil {
+			panic(err)
+		}
 		fmt.Println("tibrv.RvNetTransport")
 	} else if transportType == "cm" {
-		cmtransport.Create(&nettransport)
-		cmlistener.Create(queue, callback, cmtransport, subject)
+		if err := cmtransport.Create(&nettransport); err != nil {
+			panic(err)
+		}
+		if err := cmlistener.Create(queue, callback, cmtransport, subject); err != nil {
+			panic(err)
+		}
 		fmt.Println("tibrv.RvCmTransport")
 	} else if transportType == "dq" {
-		dqtransport.Create(
+		if err := dqtransport.Create(
 			&nettransport,
 			tibrv.Name("rvlistener"),
-		)
-		dqlistener.Create(queue, callback, dqtransport, subject)
+		); err != nil {
+			panic(err)
+		}
+		if err := dqlistener.Create(queue, callback, dqtransport, subject); err != nil {
+			panic(err)
+		}
 		fmt.Println("tibrv.RvDqTransport")
 	} else if transportType == "ft" {
 		ftcallback := func() func(groupName string, ftAction uint) {
 			return func(groupName string, ftAction uint) {
 				if ftAction == tibrv.FtActivate {
 					fmt.Println("tibrv.FtMember Activate")
-					netlistener.Create(queue, callback, nettransport, subject)
+					if err := netlistener.Create(queue, callback, nettransport, subject); err != nil {
+						panic(err)
+					}
 				} else if ftAction == tibrv.FtDeactivate {
 					fmt.Println("tibrv.FtMember Deactivate")
-					netlistener.Destroy()
+					if err := netlistener.Destroy(); err != nil {
+						panic(err)
+					}
 				} else if ftAction == tibrv.FtPrepareToActivate {
 					fmt.Println("tibrv.FtMember PrepareToActivate")
 				}
 			}
 		}()
-		ftmember.Create(
+		if err := ftmember.Create(
 			queue,
 			ftcallback,
 			nettransport,
 			"rvlistener",
 			2, 1, 1, 0, 3,
-		)
+		); err != nil {
+			panic(err)
+		}
 		fmt.Println("tibrv.FtMember")
 	} else {
 		fmt.Println("no transport type supported : ", transportType)
@@ -95,6 +117,8 @@ func main() {
 	}
 
 	for {
-		queue.Dispatch()
+		if err := queue.Dispatch(); err != nil {
+			panic(err)
+		}
 	}
 }

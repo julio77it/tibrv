@@ -26,7 +26,7 @@ func (q *RvQueue) Create(opts ...QueueOption) error {
 	if len(conf.Label) > 0 {
 		var label *C.char
 		label = C.CString(conf.Label)
-		defer C.free(unsafe.Pointer(label))
+		defer C.free(unsafe.Pointer(label)) //#nosec G103 -- unsafe needed by CGO
 
 		if status := C.tibrvQueue_SetName(q.internal, label); status != C.TIBRV_OK {
 			return NewRvError(status)

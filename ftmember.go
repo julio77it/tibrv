@@ -12,8 +12,9 @@ void ftcallbackProxy(unsigned member,
 */
 import "C"
 import (
-	"github.com/mattn/go-pointer"
 	"unsafe"
+
+	"github.com/mattn/go-pointer"
 )
 
 // FtMember event for listening on subject
@@ -41,7 +42,7 @@ func (ft *FtMember) Create(
 	activationInterval float64,
 ) error {
 	cstr := C.CString(groupName)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvftMember_Create(
 		&ft.internal,

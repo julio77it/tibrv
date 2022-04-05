@@ -28,19 +28,23 @@ type RvListener struct {
 func callbackProxy(cEvent C.tibrvEvent, cMessage C.tibrvMsg, closure unsafe.Pointer) {
 	var msg RvMessage
 
-	msg.create(cMessage)
+	if err := msg.create(cMessage); err != nil {
+		panic(err)
+	}
 
 	callback := *pointer.Restore(closure).(*RvCallback)
 
 	callback(&msg)
 
-	msg.Destroy()
+	if err := msg.Destroy(); err != nil {
+		panic(err)
+	}
 }
 
 // Create initialize listener and start to collect message in queue
 func (l *RvListener) Create(queue RvQueue, callback RvCallback, transport RvNetTransport, subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvEvent_CreateListener(
 		&l.internal,
@@ -81,7 +85,7 @@ func vectcallbackProxy(cMessage *C.tibrvMsg, numMessages C.tibrv_u32) {
 		//                                                                  |    offset in the array    |
 		//                               |         array index ZERO         |
 		// nested cast for get work done |
-		p := (*C.tibrvMsg)(unsafe.Pointer(uintptr(unsafe.Pointer(cMessage)) + i*unsafe.Sizeof(*cMessage)))
+		p := (*C.tibrvMsg)(unsafe.Pointer(uintptr(unsafe.Pointer(cMessage)) + i*unsafe.Sizeof(*cMessage))) //#nosec G103 -- unsafe needed by CGO
 
 		var closure unsafe.Pointer
 		C.tibrvMsg_GetClosure(*p, &closure)
@@ -89,16 +93,20 @@ func vectcallbackProxy(cMessage *C.tibrvMsg, numMessages C.tibrv_u32) {
 		callback := *pointer.Restore(closure).(*RvCallback)
 
 		var msg RvMessage
-		msg.create(*p)
+		if err := msg.create(*p); err != nil {
+			panic(err)
+		}
 		callback(&msg)
-		msg.Destroy()
+		if err := msg.Destroy(); err != nil {
+			panic(err)
+		}
 	}
 }
 
 // Create initialize listener and start to collect message in queue
 func (l *RvVectListener) Create(queue RvQueue, callback RvCallback, transport RvNetTransport, subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvEvent_CreateVectorListener(
 		&l.internal,

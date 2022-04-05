@@ -58,7 +58,7 @@ func (t *RvDqTransport) Create(transport *RvNetTransport, opts ...DqTransportOpt
 		schedulerActivation,
 	)
 	if name != nil {
-		C.free(unsafe.Pointer(name))
+		C.free(unsafe.Pointer(name)) //#nosec G103 -- unsafe needed by CGO
 	}
 	if status != C.TIBRV_OK {
 		return NewRvError(status)

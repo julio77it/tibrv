@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/julio77it/tibrv"
 	"time"
+
+	"github.com/julio77it/tibrv"
 )
 
 func main() {
@@ -20,24 +21,36 @@ func main() {
 	var nettransport tibrv.RvNetTransport
 	var cmtransport tibrv.RvCmTransport
 
-	nettransport.Create(tibrv.Service(service), tibrv.Network(network), tibrv.Daemon(daemon))
+	if err := nettransport.Create(tibrv.Service(service), tibrv.Network(network), tibrv.Daemon(daemon)); err != nil {
+		panic(err)
+	}
 	defer nettransport.Destroy()
 
 	if transportType == "net" {
 		transport = nettransport
 	} else if transportType == "cm" {
-		cmtransport.Create(&nettransport)
+		if err := cmtransport.Create(&nettransport); err != nil {
+			panic(err)
+		}
 		transport = cmtransport
 	}
 
 	var msg tibrv.RvMessage
-	msg.Create()
+	if err := msg.Create(); err != nil {
+		panic(err)
+	}
 	defer msg.Destroy()
 
-	msg.SetString("DATA", text)
-	msg.SetSendSubject(subject)
+	if err := msg.SetString("DATA", text); err != nil {
+		panic(err)
+	}
+	if err := msg.SetSendSubject(subject); err != nil {
+		panic(err)
+	}
 
-	transport.Send(msg)
+	if err := transport.Send(msg); err != nil {
+		panic(err)
+	}
 
 	time.Sleep(1 * time.Second)
 }

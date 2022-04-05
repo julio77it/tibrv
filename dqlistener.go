@@ -11,8 +11,9 @@ void dqcallbackProxy(tibrvcmEvent event,
 */
 import "C"
 import (
-	"github.com/mattn/go-pointer"
 	"unsafe"
+
+	"github.com/mattn/go-pointer"
 )
 
 // RvDqListener event for listening on subject
@@ -24,19 +25,23 @@ type RvDqListener struct {
 func dqcallbackProxy(cEvent C.tibrvcmEvent, cMessage C.tibrvMsg, closure unsafe.Pointer) {
 	var msg RvMessage
 
-	msg.create(cMessage)
+	if err := msg.create(cMessage); err != nil {
+		panic(err)
+	}
 
 	callback := *pointer.Restore(closure).(*RvCallback)
 
 	callback(&msg)
 
-	msg.Destroy()
+	if err := msg.Destroy(); err != nil {
+		panic(err)
+	}
 }
 
 // Create initialize listener and start to collect message in queue
 func (l *RvDqListener) Create(queue RvQueue, callback RvCallback, transport RvDqTransport, subject string) error {
 	cstr := C.CString(subject)
-	defer C.free(unsafe.Pointer(cstr))
+	defer C.free(unsafe.Pointer(cstr)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvcmEvent_CreateListener(
 		&l.internal,

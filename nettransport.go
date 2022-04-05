@@ -89,7 +89,7 @@ func (t RvNetTransport) SendReply(res, req RvMessage) error {
 // CreateInbox create a 64byte inbox
 func (t RvNetTransport) CreateInbox() (string, error) {
 	buffer := C.CString(fmt.Sprintf("%64v", ""))
-	defer C.free(unsafe.Pointer(buffer))
+	defer C.free(unsafe.Pointer(buffer)) //#nosec G103 -- unsafe needed by CGO
 
 	status := C.tibrvTransport_CreateInbox(t.internal, buffer, C.tibrv_u32(64))
 
