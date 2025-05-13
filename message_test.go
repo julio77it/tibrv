@@ -1271,3 +1271,40 @@ func TestRvMessageDebugTheBug(t *testing.T) {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 }
+
+func TestRvMessageBytes(t *testing.T) {
+	var input, output RvMessage
+	var nbytesExpected, nbytesGot uint32
+	var bytes []byte
+	var err error
+	input.Create()
+
+	expected := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+	input.SetString("alfabeto", expected)
+
+	if bytes, err = input.GetAsBytes(); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if err = output.CreateFromBytes(bytes); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	// test size
+	if nbytesExpected, err = input.GetByteSize(); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if nbytesGot, err = output.GetByteSize(); err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if nbytesExpected != nbytesGot {
+		t.Fatalf("Expected %d, got %d", nbytesExpected, nbytesGot)
+	}
+	// test content
+	got, err := output.GetString("alfabeto")
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+	if expected != got {
+		t.Fatalf("Expected %s, got %s", expected, got)
+	}
+}

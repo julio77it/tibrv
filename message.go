@@ -2,6 +2,7 @@ package tibrv
 
 /*
 #include <tibrv/tibrv.h>
+#include <tibrv/msg.h>
 #include <stdlib.h>
 #include <malloc.h>
 */
@@ -1253,6 +1254,51 @@ func (m *RvMessage) removeField(name string, fieldID FieldID) error {
 	defer C.free(unsafe.Pointer(fieldName)) //#nosec G103 -- unsafe needed by CGO
 
 	if status := C.tibrvMsg_RemoveFieldEx(m.internal, fieldName, C.ushort(fieldID)); status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// Return the size of a message (in bytes)
+func (m RvMessage) GetByteSize() (uint32, error) {
+	var size C.tibrv_u32
+
+	status := C.tibrvMsg_GetByteSize(m.internal, &size)
+	if status != C.TIBRV_OK {
+		return 0, NewRvError(status)
+	}
+	return uint32(size), nil
+}
+
+// Extract the data from a message as a byte sequence
+func (m RvMessage) GetAsBytes() ([]byte, error) {
+	var ptr unsafe.Pointer //#nosec G103 -- unsafe needed by CGO
+
+	status := C.tibrvMsg_GetAsBytes(m.internal, &ptr)
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	size, err := m.GetByteSize()
+	if err != nil {
+		return nil, err
+	}
+	bytes := make([]byte, size)
+
+	for i := uint32(0); i < size; i++ {
+		bytes[i] = *(*byte)(unsafe.Pointer(uintptr(ptr) + uintptr(i))) //#nosec G103 -- unsafe needed by CGO
+	}
+	return bytes, nil
+}
+
+// Create a new message, and populate it with data
+func (m *RvMessage) CreateFromBytes(bytes []byte) error {
+	ptr := C.malloc(C.size_t(len(bytes)))
+	defer C.free(ptr)
+
+	for i := 0; i < len(bytes); i++ {
+		*(*byte)(unsafe.Pointer(uintptr(ptr) + uintptr(i))) = bytes[i] //#nosec G103 -- unsafe needed by CGO
+	}
+	if status := C.tibrvMsg_CreateFromBytes(&m.internal, ptr); status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
 	return nil
