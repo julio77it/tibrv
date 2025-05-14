@@ -23,7 +23,7 @@ func TestRvCmTransportSend(t *testing.T) {
 	err = transport.Create(
 		&ntransport,
 		Session("TestRvCmTransportSend"),
-		Ledger("${TESTDIR}/TestRvCmTransportSend.ledger"),
+		Ledger(os.Getenv("TEST_DIR")+"TestRvCmTransportSend.ledger"),
 	)
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)

@@ -9,7 +9,7 @@ import (
 func TestCmRvListenerPublishSubscribe(t *testing.T) {
 	subject := "UNIT.TEST.CM"
 	session := "TestRvListenerCmPublishSubscribe"
-	ledger := "${TESTDIR}/TestRvListenerCmPublishSubscribe.ledger"
+	ledger := os.Getenv("TEST_DIR") + "/TestRvListenerCmPublishSubscribe.ledger"
 
 	var queue RvQueue
 	if err := queue.Create(); err != nil {
@@ -84,7 +84,7 @@ func TestCmRvListenerPublishSubscribe(t *testing.T) {
 func TestCmRvListenerRequestReply(t *testing.T) {
 	subject := "UNIT.TEST.CM"
 	session := "TestRvListenerCmPublishSubscribe"
-	ledger := "${TESTDIR}/TestRvListenerCmPublishSubscribe.ledger"
+	ledger := os.Getenv("TEST_DIR") + "/TestRvListenerCmPublishSubscribe.ledger"
 
 	var queue RvQueue
 	if err := queue.Create(); err != nil {
