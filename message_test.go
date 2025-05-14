@@ -289,7 +289,7 @@ func TestRvMessageInt64(t *testing.T) {
 	if out != in {
 		t.Fatalf("Expected %d, got %d", in, out)
 	}
-	out, err = msg.GetInt64(name + name)
+	_, err = msg.GetInt64(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}
