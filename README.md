@@ -1,7 +1,7 @@
 # tibrv
 A CGO wrapper for [TIBCO](https://www.tibco.com/) [RendezVous C API](https://docs.tibco.com/pub/rendezvous/8.5.0/doc/html/wwhelp/wwhimpl/js/html/wwhelp.htm)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/julio77it/tibrv)](https://goreportcard.com/report/github.com/julio77it/tibrv
+[![Go Report Card](https://goreportcard.com/badge/github.com/julio77it/tibrv)](https://goreportcard.com/report/github.com/julio77it/tibrv)
 [![GoDoc](https://godoc.org/github.com/julio77it/validator?status.svg)](https://pkg.go.dev/github.com/julio77it/tibrv)
 
 ## Introduction
